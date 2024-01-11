@@ -11,15 +11,22 @@ namespace PixWeb.Infrastructure.Data
         {
         }
 
-        protected override void OnModelCreating(ModelBuilder builder)
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(builder);
+            base.OnModelCreating(modelBuilder);
 
-            builder.Entity<ApplicationUser>().ToTable("usuarios");
-            builder.Entity<PixKey>()
+            modelBuilder.Entity<ApplicationUser>().ToTable("usuarios");
+            modelBuilder.Entity<PixKey>()
                 .ToTable("chaves_pix")
                 .HasIndex(c => new { c.Key, c.UserId })
                 .IsUnique();
+
+            foreach (var property in modelBuilder.Model.GetEntityTypes()
+                .SelectMany(e => e.GetProperties().Where(p => p.ClrType == typeof(string))))
+            {
+                property.SetColumnType("varchar(100)");
+            }
         }
+
     }
 }
