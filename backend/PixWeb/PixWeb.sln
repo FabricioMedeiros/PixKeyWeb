@@ -11,13 +11,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastru
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{46B0FE9E-B293-435C-8BE9-D4C3512F6FDC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PixWeb.Application", "src\PixWeb.Application\PixWeb.Application.csproj", "{E2FFC3FB-79D7-424E-9C0E-C6FEECA30049}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PixWeb.Application", "src\PixWeb.Application\PixWeb.Application.csproj", "{E2FFC3FB-79D7-424E-9C0E-C6FEECA30049}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PixWeb.Domain", "src\PixWeb.Domain\PixWeb.Domain.csproj", "{10809866-B12D-49C8-829F-C6DB22E1A96F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PixWeb.Domain", "src\PixWeb.Domain\PixWeb.Domain.csproj", "{10809866-B12D-49C8-829F-C6DB22E1A96F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PixWeb.Infrastructure", "src\PixWeb.Infrastructure\PixWeb.Infrastructure.csproj", "{3E3BA6EB-BDF1-41B0-8928-53494BE33E62}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PixWeb.Infrastructure", "src\PixWeb.Infrastructure\PixWeb.Infrastructure.csproj", "{3E3BA6EB-BDF1-41B0-8928-53494BE33E62}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PixWeb.Presentation", "src\PixWeb.Presentation\PixWeb.Presentation.csproj", "{A1E97984-1DE5-4A5C-B44E-7D2C51BEA641}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PixWeb.API", "src\PixWeb.Presentation\PixWeb.API.csproj", "{A1E97984-1DE5-4A5C-B44E-7D2C51BEA641}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
