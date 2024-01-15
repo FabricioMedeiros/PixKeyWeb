@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using PixWeb.Application.Services;
 using PixWeb.Domain.Entities;
 using PixWeb.Infrastructure.Data;
 using System.Security.Claims;
@@ -24,6 +25,7 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 
 //Add . Dependecy Injection
 builder.Services.AddScoped<UserManager<ApplicationUser>>();
+builder.Services.AddScoped<IPixKeyService, PixKeyService>();
 builder.Services.AddScoped<ClaimsPrincipal>(s => s.GetService<IHttpContextAccessor>()?.HttpContext?.User);
 
 //Add .Auto Mapper
