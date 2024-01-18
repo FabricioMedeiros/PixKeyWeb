@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using PixWeb.API.Entities;
+using PixWeb.Application.Notifications;
 using PixWeb.Application.Services;
 using PixWeb.Domain.Entities;
 using PixWeb.Domain.Interfaces;
@@ -35,6 +36,8 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 builder.Services.AddScoped<UserManager<ApplicationUser>>();
 builder.Services.AddScoped<IPixKeyService, PixKeyService>();
 builder.Services.AddScoped<IPixKeyRepository, PixKeyRepository>();
+builder.Services.AddScoped<INotificator, Notificator>();
+builder.Services.AddScoped<List<Notification>>();
 builder.Services.AddScoped<ClaimsPrincipal>(s => s.GetService<IHttpContextAccessor>()?.HttpContext?.User);
 
 //Add .Auto Mapper
