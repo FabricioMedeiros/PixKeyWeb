@@ -1,12 +1,13 @@
 ﻿using AutoMapper;
 using PixWeb.Application.Dtos;
+using PixWeb.Application.Notifications;
 using PixWeb.Domain.Entities;
 using PixWeb.Domain.Interfaces;
 using System.Security.Claims;
 
 namespace PixWeb.Application.Services
 {
-    public class PixKeyService : IPixKeyService
+    public class PixKeyService : BaseService, IPixKeyService
     {
         private readonly IPixKeyRepository _pixKeyRepository;
         private readonly IMapper _mapper;
@@ -15,7 +16,8 @@ namespace PixWeb.Application.Services
 
         public PixKeyService(IPixKeyRepository pixKeyRepository, 
             IMapper mapper,
-            ClaimsPrincipal currentUser)
+            INotificator notificator,
+            ClaimsPrincipal currentUser) : base(notificator, currentUser)
         {
             _pixKeyRepository = pixKeyRepository ?? throw new ArgumentNullException(nameof(pixKeyRepository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
@@ -46,7 +48,8 @@ namespace PixWeb.Application.Services
 
             if (existingPixKey != null && existingPixKey.UserId == _userId)
             {
-                throw new InvalidOperationException("Chave já cadastrada para o usuário.");
+                Notify("Chave já cadastrada para o usuário.");
+                return _mapper.Map<PixKeyDto>(pixKeyCreateDto);
             }
 
             var pixKey = _mapper.Map<PixKey>(pixKeyCreateDto);
@@ -64,14 +67,16 @@ namespace PixWeb.Application.Services
             
             if (existingKey == null)
             {
-                throw new InvalidOperationException("Chave 'não localizada.");
+                Notify("Chave 'não localizada.");
+                return _mapper.Map<PixKeyDto>(pixKeyUpdateDto);
             }
             
             var existingKeyForUser = await _pixKeyRepository.GetByKeyAsync(_userId, pixKeyUpdateDto.Key);
 
             if (existingKeyForUser != null && existingKeyForUser.Id != existingKey.Id)
             {
-                throw new InvalidOperationException("Chave já cadastrada para o usuário.");
+                Notify("Chave já cadastrada para o usuário.");
+                return _mapper.Map<PixKeyDto>(pixKeyUpdateDto);
             }
 
             _mapper.Map(pixKeyUpdateDto, existingKey);
@@ -86,7 +91,8 @@ namespace PixWeb.Application.Services
 
             if (existingPixKey == null)
             {
-                throw new InvalidOperationException("Chave 'não localizada.");
+                Notify("Chave 'não localizada.");
+                return false;
             }
 
             await _pixKeyRepository.DeleteAsync(existingPixKey);
