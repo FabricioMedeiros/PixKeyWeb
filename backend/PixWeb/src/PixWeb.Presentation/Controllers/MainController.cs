@@ -1,7 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using PixWeb.Application.Notifications;
-using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 
 namespace PixWeb.API.Controllers
