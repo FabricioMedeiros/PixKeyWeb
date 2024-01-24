@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FluentValidation.Results;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using PixWeb.Application.Notifications;
 using System.Security.Claims;
@@ -52,6 +53,16 @@ namespace PixWeb.API.Controllers
             }
 
             CustomResponse();
+        }
+
+        protected ActionResult CustomResponse(ValidationResult validationResult)
+        {
+            foreach (var erro in validationResult.Errors)
+            {
+                NotifyError(erro.ErrorMessage);
+            }
+
+            return CustomResponse();
         }
 
         protected void NotifyError(string message)
