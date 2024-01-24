@@ -1,18 +1,22 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PixWeb.Application.Dtos;
+using PixWeb.Application.Notifications;
 using PixWeb.Application.Services;
+using PixWeb.Application.Validators;
+using System.Security.Claims;
 
 namespace PixWeb.API.Controllers
 {
-    [ApiController]
     [Route("api/[controller]")]
     [Authorize]
-    public class PixKeyController : ControllerBase
+    public class PixKeyController : MainController
     {
         private readonly IPixKeyService _pixKeyService;
 
-        public PixKeyController(IPixKeyService pixKeyService)
+        public PixKeyController(IPixKeyService pixKeyService,
+            INotificator notificator,
+            ClaimsPrincipal currentUser) : base(notificator, currentUser)
         {
             _pixKeyService = pixKeyService;
         }
@@ -40,14 +44,28 @@ namespace PixWeb.API.Controllers
         [HttpPost]
         public async Task<ActionResult<PixKeyDto>> CreatePixKey(PixKeyCreateDto pixKeyCreateDto)
         {
+            var validationResult = await new PixKeyValidator().ValidateAsync(pixKeyCreateDto);
+
+            if (!validationResult.IsValid)
+            {
+                return CustomResponse(validationResult);
+            }
+
             var createdPixKey = await _pixKeyService.CreateAsync(pixKeyCreateDto);
-            return Ok(createdPixKey);
+            return CustomResponse(createdPixKey);
         }
 
 
         [HttpPut()]
         public async Task<ActionResult<PixKeyDto>> UpdatePixKey(PixKeyUpdateDto pixKeyUpdateDto)
         {
+            var validationResult = await new PixKeyValidator().ValidateAsync(pixKeyUpdateDto);
+
+            if (!validationResult.IsValid)
+            {
+                return CustomResponse(validationResult);
+            }
+
             var updatedPixKey = await _pixKeyService.UpdateAsync(pixKeyUpdateDto);
 
             if (updatedPixKey == null)
@@ -55,7 +73,7 @@ namespace PixWeb.API.Controllers
                 return NotFound();
             }
 
-            return Ok(updatedPixKey);
+            return CustomResponse(updatedPixKey);
         }
 
         [HttpDelete("{key}")]
