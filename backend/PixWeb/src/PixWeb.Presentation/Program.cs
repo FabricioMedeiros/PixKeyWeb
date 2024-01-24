@@ -1,4 +1,5 @@
 using AutoMapper;
+using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -7,6 +8,7 @@ using Microsoft.OpenApi.Models;
 using PixWeb.API.Entities;
 using PixWeb.Application.Notifications;
 using PixWeb.Application.Services;
+using PixWeb.Application.Validators;
 using PixWeb.Domain.Entities;
 using PixWeb.Domain.Interfaces;
 using PixWeb.Infrastructure.Data;
@@ -39,6 +41,9 @@ builder.Services.AddScoped<IPixKeyRepository, PixKeyRepository>();
 builder.Services.AddScoped<INotificator, Notificator>();
 builder.Services.AddScoped<List<Notification>>();
 builder.Services.AddScoped<ClaimsPrincipal>(s => s.GetService<IHttpContextAccessor>()?.HttpContext?.User);
+
+//Add. Validators
+builder.Services.AddValidatorsFromAssemblyContaining<PixKeyValidator>();
 
 //Add .Auto Mapper
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
