@@ -28,13 +28,6 @@ namespace PixWeb.Application.Validators
                 .Must((pixKey, key) => ValidateKeyByType(pixKey.KeyType, key))
                 .WithMessage("A chave não é válida para o tipo especificado.");
 
-            //RuleFor(x => x.Key)
-            //     .NotEmpty().WithMessage("O campo Key é obrigatório.");           
-
-            //RuleFor(pixKey => pixKey.Key)
-            //    .Must((pixKey, key) => ValidateKeyByType(pixKey.KeyType, key))
-            //    .WithMessage("A chave não é válida para o tipo especificado.");
-
         }
 
         private bool IsValidKeyType(KeyType keyType)
