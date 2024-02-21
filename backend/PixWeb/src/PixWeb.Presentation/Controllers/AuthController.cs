@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using PixWeb.API.Entities;
 using PixWeb.Application.Dtos;
+using PixWeb.Application.Notifications;
 using PixWeb.Domain.Entities;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -14,12 +15,15 @@ namespace PixWeb.API.Controllers
     [ApiController]
     [Route("api/[controller]")]
     [AllowAnonymous]
-    public class AuthController : ControllerBase
+    public class AuthController : MainController
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IConfiguration _configuration;
 
-        public AuthController(UserManager<ApplicationUser> userManager, IConfiguration configuration)
+        public AuthController(UserManager<ApplicationUser> userManager,
+            IConfiguration configuration,
+            INotificator notificator,
+            ClaimsPrincipal currentUser) : base(notificator, currentUser)
         {
             _userManager = userManager;
             _configuration = configuration;
@@ -39,10 +43,16 @@ namespace PixWeb.API.Controllers
 
             if (result.Succeeded)
             {
-                return Ok(new { Message = "Usuário registrado com sucesso." });
+                var token = GenerateJwtToken(user);
+
+                return CustomResponse(new { Token = token });
+            }
+            foreach (var error in result.Errors)
+            {
+                NotifyError(error.Description);
             }
 
-            return BadRequest(new { Errors = result.Errors });
+            return CustomResponse(model);
         }
 
         [HttpPost("login")]
@@ -54,10 +64,12 @@ namespace PixWeb.API.Controllers
             {
                 var token = GenerateJwtToken(user);
 
-                return Ok(new { Token = token });
+                return CustomResponse(new { Token = token });
             }
 
-            return Unauthorized(new { Message = "Credênciais inválidas." });
+            NotifyError("Credênciais inválidas.");
+
+            return CustomResponse(model);
         }
 
         private string GenerateJwtToken(ApplicationUser user)
@@ -67,7 +79,7 @@ namespace PixWeb.API.Controllers
             var claims = new[]
             {
               new Claim(JwtRegisteredClaimNames.Sub, user.Id),
-              new Claim("UserName", user.UserName),
+              new Claim("username", user.Name),
               new Claim(JwtRegisteredClaimNames.Email, user.Email),
               new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             };
