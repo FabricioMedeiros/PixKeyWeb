@@ -10,14 +10,6 @@ a.navbar-brand {
     word-break: break-all;
 }
 
-.container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    overflow: hidden;
-}
-
 .footer {
     position: fixed;
     bottom: 0;
@@ -25,16 +17,16 @@ a.navbar-brand {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 60px;
-    line-height: 60px;
-    background-color: #f8f9fa; /* Cor de fundo desejada */
+    height: 50px;
+    line-height: 50px;
+    background-color: #f8f9fa; 
     border-top: 1px solid #e5e5e5;
 }
 
-.footer .container {
-    color: #343a40 !important; /* Cor escura para o texto do footer */
-}
 
+.footer .container {
+    color: #343a40 !important;
+}
 
 .border-top {
     border-top: 1px solid #e5e5e5;
