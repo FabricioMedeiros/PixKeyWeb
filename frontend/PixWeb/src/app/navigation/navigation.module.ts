@@ -6,9 +6,10 @@ import { MenuComponent } from './menu/menu.component';
 import { FooterComponent } from './footer/footer.component';
 import { RouterModule } from '@angular/router';
 import { NotFoundComponent } from './not-found/not-found.component';
+import { MenuLoginComponent } from './menu-login/menu-login.component';
 
 @NgModule({
-  declarations: [HomeComponent, MenuComponent, FooterComponent, NotFoundComponent],
+  declarations: [HomeComponent, MenuComponent, FooterComponent, NotFoundComponent, MenuLoginComponent],
   imports: [CommonModule, RouterModule],
   exports: [HomeComponent, MenuComponent, FooterComponent, NotFoundComponent],
 })
