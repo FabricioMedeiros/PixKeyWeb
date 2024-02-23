@@ -35,6 +35,10 @@ export class LocalStorageUtils {
         return localStorage.getItem('pixweb.token');
     }
 
+    public getEmailUser(): string | null {
+        return localStorage.getItem('pixweb.email');
+    }
+
     public saveTokenUser(token: string) {
         localStorage.setItem('pixweb.token', token);
     }
