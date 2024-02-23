@@ -1,27 +1,25 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-success">
-    <a class="navbar-brand" href="#">PixWeb</a>
+    <div class="container">
 
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
+        <a class="navbar-brand" href="#">PixWeb</a>
+
+        <button class="navbar-toggler navbar-light" type="button" data-toggle="collapse" data-target="#navbarResponsive"
         aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
+    <span class="navbar-toggler-icon"></span>
+</button>
 
-    <div class="collapse navbar-collapse" id="navbarResponsive">
-        <!-- Opções à esquerda em telas grandes e dentro do hamburguer em telas pequenas -->
-        <ul class="navbar-nav order-lg-1">
-            <li class="nav-item">
-                <a class="nav-link" href="#">Chaves Pix</a>
-            </li>
-        </ul>
 
-        <!-- Opções à direita em telas grandes -->
-        <ul class="navbar-nav ml-auto order-lg-2">
-            <li class="nav-item">
-                <a class="nav-link" routerLink="account/register">Cadastrar Conta</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" routerLink="account/login">Login</a>
-            </li>
-        </ul>
+        <div class="collapse navbar-collapse d-lg-inline-flex justify-content-center" id="navbarResponsive">
+
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Chaves Pix</a>
+                </li>
+            </ul>
+
+            <ul class="navbar-nav ml-lg-auto">
+                <app-menu-login></app-menu-login>
+            </ul>
+        </div>
     </div>
 </nav>
