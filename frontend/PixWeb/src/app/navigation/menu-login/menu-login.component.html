@@ -1,0 +1,21 @@
+<ul [ngSwitch]="isUserLoggedIn()" class="navbar-nav">
+    <ng-container *ngSwitchCase="false">
+        <li class="nav-item">
+            <a class="nav-link" [routerLink]="['/account/login']">Login</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" [routerLink]="['/account/register']">Cadastrar Conta</a>
+        </li>
+    </ng-container>
+
+    <ng-container *ngSwitchCase="true">
+        <li class="nav-item">
+            <a class="nav-link text-dark" href="javascript:void(0)">{{ user }}</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-dark" href="javascript:void(0)" (click)="logout()">
+                Sair <span class="fas fa-sign-out-alt"></span>
+            </a>
+        </li>
+    </ng-container>
+</ul>
