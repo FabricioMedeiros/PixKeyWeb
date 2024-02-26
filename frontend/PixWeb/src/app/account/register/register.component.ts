@@ -6,29 +6,30 @@ import { ValidationMessages, GenericValidator, DisplayMessage } from 'src/app/ut
 import { CustomValidators } from '@narik/custom-validators';
 import { Observable, fromEvent, merge } from 'rxjs';
 import { Route, Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css']
 })
-export class RegisterComponent implements OnInit, AfterViewInit{
+export class RegisterComponent implements OnInit, AfterViewInit {
 
-  @ViewChildren(FormControlName, { read: ElementRef })  formInputElements: ElementRef[] = [];
+  @ViewChildren(FormControlName, { read: ElementRef }) formInputElements: ElementRef[] = [];
 
   errors: any[] = [];
   registerForm!: FormGroup;
   user!: User;
-  
+
   validationMessages!: ValidationMessages;
   genericValidator!: GenericValidator;
   displayMessage: DisplayMessage = {};
 
-  constructor(private fb: FormBuilder, private accountService : AccountService,
-    private router : Router){
-    
+  constructor(private fb: FormBuilder, private accountService: AccountService,
+    private router: Router, private toastr: ToastrService) {
+
     this.validationMessages = {
-      name:{
+      name: {
         required: 'Informe o nome',
       },
       email: {
@@ -43,9 +44,9 @@ export class RegisterComponent implements OnInit, AfterViewInit{
 
     this.genericValidator = new GenericValidator(this.validationMessages);
   }
-  
+
   ngOnInit(): void {
-    let password = new FormControl('', [Validators.required, CustomValidators.rangeLength([6, 15])]);    
+    let password = new FormControl('', [Validators.required, CustomValidators.rangeLength([6, 15])]);
 
     this.registerForm = this.fb.group({
       name: ['', Validators.required],
@@ -62,28 +63,38 @@ export class RegisterComponent implements OnInit, AfterViewInit{
       this.displayMessage = this.genericValidator.processMessages(this.registerForm);
     });
   }
-  
+
   addAccount() {
     if (this.registerForm.dirty && this.registerForm.valid) {
-     this.user = Object.assign({}, this.user, this.registerForm.value);
-     this.accountService.registerUser(this.user).
-     subscribe(
-      sucess => {this.processSuccess(sucess)} ,
-      fail => {this.processFail(fail)}
-     );
+      this.user = Object.assign({}, this.user, this.registerForm.value);
+      this.accountService.registerUser(this.user).subscribe({
+        next: (success) => {
+          this.processSuccess(success);
+        },
+        error: (error) => {
+          this.processFail(error);
+        }
+      });
     }
   }
 
-  processSuccess(response : any) {
+  processSuccess(response: any) {
     this.registerForm.reset();
     this.errors = [];
 
     this.accountService.LocalStorage.saveLocalUserData(response);
 
-    this.router.navigate(['/home']);
-  }  
+    let toast = this.toastr.success('Cadastro realizado com Sucesso!', 'Bem vindo!');
 
-  processFail(fail : any) {
+    if (toast) {
+      toast.onHidden.subscribe(() => {
+        this.router.navigate(['/home']);
+      });
+    }
+  }
+
+  processFail(fail: any) {
     this.errors = fail.error.errors;
-  }  
+    this.toastr.error('Ocorreu um erro.', 'Atenção');
+  }
 }
