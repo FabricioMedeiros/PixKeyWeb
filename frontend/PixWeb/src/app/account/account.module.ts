@@ -29,7 +29,7 @@ import { NarikCustomValidatorsModule } from '@narik/custom-validators';
     NarikCustomValidatorsModule
   ],
   providers: [
-    AccountService    
+    AccountService  
   ]
 })
 export class AccountModule { }
