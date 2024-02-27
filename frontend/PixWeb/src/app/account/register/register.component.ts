@@ -2,11 +2,12 @@ import { AccountService } from './../services/account.service';
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChildren } from '@angular/core';
 import { FormBuilder, FormControl, FormControlName, FormGroup, Validators } from '@angular/forms';
 import { User } from '../models/user';
-import { ValidationMessages, GenericValidator, DisplayMessage } from 'src/app/utils/generic-form-validation';
+
 import { CustomValidators } from '@narik/custom-validators';
 import { Observable, fromEvent, merge } from 'rxjs';
 import { Route, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { DisplayMessage, GenericValidator, ValidationMessages } from '../../utils/generic-form-validation';
 
 @Component({
   selector: 'app-register',
@@ -24,6 +25,8 @@ export class RegisterComponent implements OnInit, AfterViewInit {
   validationMessages!: ValidationMessages;
   genericValidator!: GenericValidator;
   displayMessage: DisplayMessage = {};
+
+  changesSaved : boolean = true;
 
   constructor(private fb: FormBuilder, private accountService: AccountService,
     private router: Router, private toastr: ToastrService) {
@@ -61,6 +64,7 @@ export class RegisterComponent implements OnInit, AfterViewInit {
 
     merge(...controlBlurs).subscribe(() => {
       this.displayMessage = this.genericValidator.processMessages(this.registerForm);
+      this.changesSaved = false;
     });
   }
 
@@ -75,6 +79,8 @@ export class RegisterComponent implements OnInit, AfterViewInit {
           this.processFail(error);
         }
       });
+
+      this.changesSaved = true;
     }
   }
 
