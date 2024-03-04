@@ -10,6 +10,7 @@ import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { NarikCustomValidatorsModule } from '@narik/custom-validators';
+import { PixKeyService } from './services/pixkey.service';
 
 
 @NgModule({
@@ -27,6 +28,10 @@ import { NarikCustomValidatorsModule } from '@narik/custom-validators';
     ReactiveFormsModule,
     HttpClientModule,
     NarikCustomValidatorsModule
+  ]
+  ,
+  providers: [
+    PixKeyService  
   ]
 })
 export class PixkeyModule { }
