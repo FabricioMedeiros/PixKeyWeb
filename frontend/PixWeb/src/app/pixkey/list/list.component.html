@@ -1,1 +1,36 @@
-<p>list works!</p>
+<div class="container">
+    <div class="header text-center">
+      <h1>Chaves Pix</h1>
+    </div>
+  
+    <button class="btn btn-new bg-success">Cadastrar</button>
+  
+    <table class="table table-bordered table-striped">
+      <thead class="thead-dark">
+        <tr>
+          <th>Descrição</th>
+          <th>Chave Pessoal</th>
+          <th>Tipo de Chave</th>
+          <th>Chave</th>      
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let pixKey of pixKeys">
+          <td>{{ pixKey.description }}</td>
+          <td>{{ pixKey.isPersonalKey ? 'Sim' : 'Não' }}</td>
+          <td>{{ getKeyTypeDescription(pixKey.keyType) }}</td>
+          <td>{{ pixKey.key }}</td>            
+          <td class="d-flex justify-content-center align-items-center">
+            <button class="btn btn-warning">
+                <i class="fas fa-edit"></i>
+            </button>
+            <button class="btn btn-danger">
+                <i class="fas fa-trash-alt"></i>
+            </button>
+        </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  

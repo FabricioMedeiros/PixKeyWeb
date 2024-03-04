@@ -1,0 +1,40 @@
+.header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.header h1 {
+  font-size: 40px;
+  margin-top: 15px;
+}
+
+.btn-new {
+  margin: 10px 0;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.table, th, td {
+  border: 1px solid #ddd;
+}
+
+th, td {
+  padding: 10px;
+  text-align: left;
+  vertical-align: middle; /* Centraliza verticalmente o conteúdo na tabela */
+}
+
+.btn {
+  margin-right: 10px;
+  display: inline-flex;
+  align-items: center; /* Centraliza verticalmente o conteúdo dos botões */
+}
+
+.btn-primary {
+  background-color: darkgreen;
+  color: white;
+}
