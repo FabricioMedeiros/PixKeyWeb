@@ -27,7 +27,7 @@ export class LoginComponent  implements OnInit, AfterViewInit {
   displayMessage: DisplayMessage = {};
 
   constructor(private fb: FormBuilder, private accountService: AccountService,
-    private router: Router, private toastr: ToastrService) {
+    private router: Router, private toastr: ToastrService) {   
 
     this.validationMessages = {
       email: {
