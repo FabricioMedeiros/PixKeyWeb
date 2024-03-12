@@ -74,12 +74,29 @@ export class FormComponent implements OnInit, AfterViewInit {
     });
   }
 
-  loadPixKey(id: string) {
+  // loadPixKey(id: string) {
+  //   this.pixKeyService.getPixKeyById(id).subscribe({
+  //     next: (pixKey) => {this.pixKey = pixKey},
+  //     error: (error) => {console.error(error);}
+  //   });
+  // }
+
+  loadPixKey(id: number) {
     this.pixKeyService.getPixKeyById(id).subscribe({
-      next: (pixKey) => {this.pixKey = pixKey},
-      error: (error) => {console.error(error);}
+      next: (pixKey) => {
+        this.pixKey = pixKey;
+        this.pixKeyForm.patchValue({
+          description: pixKey.description,
+          keyType: pixKey.keyType.toString(),
+          key: pixKey.key,
+          isPersonalKey: pixKey.isPersonalKey,
+        });
+      },
+      error: (error) => {
+        console.error(error);
+      }
     });
-  }
+  }  
 
   savePixKey() {   
     if (this.pixKeyForm.dirty && this.pixKeyForm.valid) {     
@@ -118,7 +135,7 @@ export class FormComponent implements OnInit, AfterViewInit {
     this.pixKeyForm.reset();
     this.errors = [];
     
-    let toast = this.toastr.success('Chave Pix Cadastrada com Sucesso!', 'Atenção!');
+    let toast = this.toastr.success(this.isEditMode ? 'Chave Pix Alterada com Sucesso!' : 'Chave Pix Cadastrada com Sucesso!', 'Atenção!');
 
     if (toast) {
       toast.onHidden.subscribe(() => {
