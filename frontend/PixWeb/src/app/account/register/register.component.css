@@ -1,34 +1,17 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body, html {
-    height: 100%;
-}
-
-.alert {
-    margin-bottom: 10px;
-}
-
 .register {
-    background:#fff;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: calc(100% - 80px); 
     flex-direction: column;
 }
 
 .account-register {
     width: 400px;
-    background: #fff;
-    padding: 40px;
+    padding: 20px;
     border-radius: 5px;
     box-shadow: 0 0 20px rgba(0, 128, 0, 0.5);
-    margin: 20px;
-    max-height: 80vh;
+    margin-bottom: 20px;
+    height: 100%;
     overflow-y: auto;
 }
 
@@ -88,11 +71,11 @@ body, html {
     background-color: #bfbcbc;
 }
 
-.custom-checkbox:hover input ~ .checkmark {
+.custom-checkbox:hover input~.checkmark {
     background-color: #747474;
 }
 
-.custom-checkbox input:checked ~ .checkmark {
+.custom-checkbox input:checked~.checkmark {
     background-color: #2196F3;
 }
 
@@ -102,7 +85,7 @@ body, html {
     display: none;
 }
 
-.custom-checkbox input:checked ~ .checkmark:after {
+.custom-checkbox input:checked~.checkmark:after {
     display: block;
 }
 

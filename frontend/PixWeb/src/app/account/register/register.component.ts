@@ -30,7 +30,7 @@ export class RegisterComponent implements OnInit, AfterViewInit {
 
   constructor(private fb: FormBuilder, private accountService: AccountService,
     private router: Router, private toastr: ToastrService) {
-
+   
     this.validationMessages = {
       name: {
         required: 'Informe o nome',
