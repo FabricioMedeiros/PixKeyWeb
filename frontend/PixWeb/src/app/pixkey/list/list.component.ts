@@ -1,6 +1,7 @@
 import { PixKeyService } from './../services/pixkey.service';
 import { Component, OnInit } from '@angular/core';
 import { PixKey } from '../models/pixkey';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-list',
@@ -12,7 +13,7 @@ export class ListComponent implements OnInit {
   public pixKeys: PixKey[] = [];;
   errorMessage: string = '';
 
-  constructor(private pixKeyService: PixKeyService) { }
+  constructor(private pixKeyService: PixKeyService, private router: Router) { }
 
   ngOnInit(): void {
     this.pixKeyService.getAllPixKeys().subscribe({
@@ -38,6 +39,10 @@ export class ListComponent implements OnInit {
       default:
         return 'Desconhecido';
     }
+  }
+
+  editPixKey(pixKey: PixKey) {
+    this.router.navigate(['/pixkey/edit', pixKey.id]);
   }
 
 }
