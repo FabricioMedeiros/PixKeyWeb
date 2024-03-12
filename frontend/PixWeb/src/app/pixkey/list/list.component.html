@@ -24,7 +24,7 @@
           <td>{{ getKeyTypeDescription(pixKey.keyType) }}</td>
           <td>{{ pixKey.key }}</td>
           <td class="d-flex justify-content-center align-items-center">
-            <button class="btn btn-action btn-warning">
+            <button class="btn btn-action btn-warning" (click)="editPixKey(pixKey)">
               <i class="fas fa-edit"></i>
             </button>
             <button class="btn btn-action btn-danger">
