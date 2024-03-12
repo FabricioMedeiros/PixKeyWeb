@@ -42,13 +42,20 @@ namespace PixWeb.Application.Services
             return _mapper.Map<PixKeyDto>(pixKey);
         }
 
+        public async Task<PixKeyDto> GetByIdAsync(int id)
+        {
+            var pixKey = await _pixKeyRepository.GetByIdAsync(_userId, id);
+            return _mapper.Map<PixKeyDto>(pixKey);
+        }
+
+
         public async Task<PixKeyDto> CreateAsync(PixKeyCreateDto pixKeyCreateDto)
         {
             var existingPixKey = await _pixKeyRepository.GetByKeyAsync(_userId, pixKeyCreateDto.Key);
 
             if (existingPixKey != null && existingPixKey.UserId == _userId)
             {
-                Notify("Chave já cadastrada para o usuário.");
+                Notify("Chave já cadastrada.");
                 return _mapper.Map<PixKeyDto>(pixKeyCreateDto);
             }
 
@@ -75,7 +82,7 @@ namespace PixWeb.Application.Services
 
             if (existingKeyForUser != null && existingKeyForUser.Id != existingKey.Id)
             {
-                Notify("Chave já cadastrada para o usuário.");
+                Notify("Chave já cadastrada.");
                 return _mapper.Map<PixKeyDto>(pixKeyUpdateDto);
             }
 

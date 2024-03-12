@@ -28,10 +28,23 @@ namespace PixWeb.API.Controllers
             return Ok(pixKeys);
         }
 
-        [HttpGet("{key}")]
+        [HttpGet("key/{key}")]
         public async Task<ActionResult<PixKeyDto>> GetPixKey(string key)
         {
             var pixKey = await _pixKeyService.GetByKeyAsync(key);
+
+            if (pixKey == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(pixKey);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<PixKeyDto>> GetPixKeyById(int id)
+        {
+            var pixKey = await _pixKeyService.GetByIdAsync(id);
 
             if (pixKey == null)
             {
