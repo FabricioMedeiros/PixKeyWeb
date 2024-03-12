@@ -1,17 +1,19 @@
 <div class="container">
-    <div class="header text-center">
+  <div class="main-content">
+
+    <div class="header">
       <h1>Chaves Pix</h1>
     </div>
-  
-    <button class="btn btn-new bg-success">Cadastrar</button>
-  
+
+    <a [routerLink]="['/pixkey/new']" class="btn btn-new bg-success">Cadastrar</a>
+
     <table class="table table-bordered table-striped">
       <thead class="thead-dark">
         <tr>
           <th>Descrição</th>
           <th>Chave Pessoal</th>
           <th>Tipo de Chave</th>
-          <th>Chave</th>      
+          <th>Chave</th>
           <th>Ações</th>
         </tr>
       </thead>
@@ -20,17 +22,17 @@
           <td>{{ pixKey.description }}</td>
           <td>{{ pixKey.isPersonalKey ? 'Sim' : 'Não' }}</td>
           <td>{{ getKeyTypeDescription(pixKey.keyType) }}</td>
-          <td>{{ pixKey.key }}</td>            
+          <td>{{ pixKey.key }}</td>
           <td class="d-flex justify-content-center align-items-center">
-            <button class="btn btn-warning">
-                <i class="fas fa-edit"></i>
+            <button class="btn btn-action btn-warning">
+              <i class="fas fa-edit"></i>
             </button>
-            <button class="btn btn-danger">
-                <i class="fas fa-trash-alt"></i>
+            <button class="btn btn-action btn-danger">
+              <i class="fas fa-trash-alt"></i>
             </button>
-        </td>
+          </td>
         </tr>
       </tbody>
     </table>
   </div>
-  
+</div>

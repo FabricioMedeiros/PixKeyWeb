@@ -15,7 +15,7 @@ export class ListComponent implements OnInit {
   constructor(private pixKeyService: PixKeyService) { }
 
   ngOnInit(): void {
-    this.pixKeyService.getAll().subscribe({
+    this.pixKeyService.getAllPixKeys().subscribe({
       next: pixKeys => {
         this.pixKeys = pixKeys;
       },

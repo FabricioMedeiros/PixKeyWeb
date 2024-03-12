@@ -1,15 +1,11 @@
-.header {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
 .header h1 {
-  font-size: 40px;
+  font-size: 30px;
   margin-top: 15px;
 }
 
 .btn-new {
-  margin: 10px 0;
+  align-self: start;
+  margin-bottom: 10px;
 }
 
 .table {
@@ -25,13 +21,13 @@
 th, td {
   padding: 10px;
   text-align: left;
-  vertical-align: middle; /* Centraliza verticalmente o conteúdo na tabela */
+  vertical-align: middle; 
 }
 
-.btn {
+.btn-action {
   margin-right: 10px;
   display: inline-flex;
-  align-items: center; /* Centraliza verticalmente o conteúdo dos botões */
+  align-items: center; 
 }
 
 .btn-primary {
