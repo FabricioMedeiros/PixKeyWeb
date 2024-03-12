@@ -17,7 +17,7 @@ export class PixKeyService extends BaseService {
             .pipe(catchError(super.serviceError));
     }
 
-    getPixKeyById(id: string): Observable<PixKey> {
+    getPixKeyById(id: number): Observable<PixKey> {
         const headers = this.GetAuthHeaderJson();
 
         return this.http
