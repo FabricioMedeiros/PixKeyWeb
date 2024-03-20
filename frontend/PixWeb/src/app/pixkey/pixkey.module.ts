@@ -11,6 +11,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { NarikCustomValidatorsModule } from '@narik/custom-validators';
 import { PixKeyService } from './services/pixkey.service';
+import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask';
 
 
 @NgModule({
@@ -27,11 +28,14 @@ import { PixKeyService } from './services/pixkey.service';
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
-    NarikCustomValidatorsModule
+    NarikCustomValidatorsModule,
+    NgxMaskDirective, 
+    NgxMaskPipe
   ]
   ,
   providers: [
-    PixKeyService  
+    PixKeyService,
+    provideNgxMask()  
   ]
 })
 export class PixkeyModule { }
