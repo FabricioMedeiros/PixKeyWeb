@@ -1,4 +1,9 @@
-.header h1 {
+.top-container {
+  width: 100%;
+}
+
+.top-container h1 {
+  text-align: center;
   font-size: 30px;
   margin-top: 15px;
 }
