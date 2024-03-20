@@ -4,6 +4,7 @@ import { PixkeyAppComponent } from './pixkey.app.component';
 import { ListComponent } from './list/list.component';
 import { FormComponent } from './form/form.component';
 import { DeleteComponent } from './delete/delete.component';
+import { pixKeyResolver } from './services/pixkey.resolve';
 
 const routes: Routes = [
   {
@@ -11,7 +12,7 @@ const routes: Routes = [
       children: [
           { path: 'list', component: ListComponent},
           { path: 'new', component: FormComponent},
-          { path: 'edit/:id', component: FormComponent},
+          { path: 'edit/:id', component: FormComponent, resolve: { pixKey: pixKeyResolver }},
           { path: 'delete:id', component: DeleteComponent}
       ]
   }

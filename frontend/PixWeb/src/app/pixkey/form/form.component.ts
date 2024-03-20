@@ -60,12 +60,12 @@ export class FormComponent implements OnInit, AfterViewInit {
 
     this.isInvalidKey = false;
 
-    this.route.params.subscribe(params => {
-      if (params['id']) {
-        this.isEditMode = true;
-        this.loadPixKey(params['id']);
-      }
-    });
+    const resolvedData = this.route.snapshot.data['pixKey'];
+    
+    if (resolvedData) {
+      this.isEditMode = true;
+      this.pixKeyForm.patchValue(resolvedData);
+    }
 
     this.pixKeyForm.get('keyType')?.valueChanges.subscribe(keyType => {
       this.applyValidationAndMask(keyType);
