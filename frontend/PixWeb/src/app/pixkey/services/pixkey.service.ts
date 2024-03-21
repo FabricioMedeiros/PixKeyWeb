@@ -47,7 +47,7 @@ export class PixKeyService extends BaseService {
         return response;
     }
 
-    deletePixKey(id: string): Observable<any> {
+    deletePixKey(id: number): Observable<any> {
         const headers = this.GetAuthHeaderJson();
 
         return this.http
