@@ -52,6 +52,7 @@ export class FormComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.pixKeyForm = this.fb.group({
+      id: ['', []],
       description: ['', [Validators.required]],
       keyType: ['', [Validators.required]],
       key: ['', [Validators.required]],
@@ -61,7 +62,7 @@ export class FormComponent implements OnInit, AfterViewInit {
     this.isInvalidKey = false;
 
     const resolvedData = this.route.snapshot.data['pixKey'];
-    
+
     if (resolvedData) {
       this.isEditMode = true;
       this.pixKeyForm.patchValue(resolvedData);
@@ -73,9 +74,9 @@ export class FormComponent implements OnInit, AfterViewInit {
 
     this.pixKeyForm.get('key')?.valueChanges.subscribe(key => {
       const keyTypeValueControl = this.pixKeyForm.get('keyType');
-      
+
       if (keyTypeValueControl && keyTypeValueControl.value === '0') {
-         this.customMask = this.getMaskForKeyType(keyTypeValueControl?.value);
+        this.customMask = this.getMaskForKeyType(keyTypeValueControl?.value);
       }
 
       this.pixKeyForm.get('key')?.markAsPristine();
@@ -88,7 +89,7 @@ export class FormComponent implements OnInit, AfterViewInit {
 
     merge(...controlBlurs).subscribe(() => {
       this.displayMessage = this.genericValidator.processMessages(this.pixKeyForm);
-      
+
       this.changesSaved = false;
     });
   }
@@ -162,7 +163,7 @@ export class FormComponent implements OnInit, AfterViewInit {
   }
 
   cancel(): void {
-    this.router.navigate(['/pixkey/list']); 
+    this.router.navigate(['/pixkey/list']);
   }
 
   getMaskForKeyType(keyType: string): string {
@@ -174,7 +175,7 @@ export class FormComponent implements OnInit, AfterViewInit {
       } else {
         return '00.000.000/0000-00';
       }
-      
+
     } else {
       switch (keyType) {
         case '1':
@@ -184,7 +185,7 @@ export class FormComponent implements OnInit, AfterViewInit {
         case '3':
           return 'AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA';
         default:
-          throw new Error('Tipo de chave não suportado: ' + keyType);
+          return '';
       }
     }
   }
@@ -225,14 +226,19 @@ export class FormComponent implements OnInit, AfterViewInit {
           }
         };
       default:
-        throw new Error('Tipo de chave não suportado: ' + keyType);
+        return {
+          validators: [Validators.required],
+          messages: {
+            required: 'Informe a Chave Pix'
+          }
+        };
     }
   }
 
-  applyValidationAndMask(keyType : string): void {
+  applyValidationAndMask(keyType: string): void {
     const keyValueControl = this.pixKeyForm.get('key');
     const { validators, messages } = this.getValidatorsForKeyType(keyType);
-    
+
     keyValueControl?.clearValidators();
 
     if (validators) {
@@ -240,7 +246,7 @@ export class FormComponent implements OnInit, AfterViewInit {
     }
 
     keyValueControl?.updateValueAndValidity();
-    this.customMask = this.getMaskForKeyType(keyType);    
+    this.customMask = this.getMaskForKeyType(keyType);
 
     this.validationMessages = Object.assign({}, this.validationMessages, { key: messages });
     this.genericValidator = new GenericValidator(this.validationMessages);

@@ -17,6 +17,8 @@
         <form novalidate (ngSubmit)="savePixKey()" [formGroup]="pixKeyForm">
 
           <div class="card-body">
+            <input type="hidden" formControlName="id">
+
             <div class="form-group">
               <label for="description">Descrição</label>
               <input class="form-control" id="description" type="text" placeholder="Descrição (requerido)"
