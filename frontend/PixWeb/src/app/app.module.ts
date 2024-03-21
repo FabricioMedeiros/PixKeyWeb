@@ -7,6 +7,8 @@ import { NavigationModule } from './navigation/navigation.module';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
+import { BsModalService, ModalModule } from 'ngx-bootstrap/modal';
+
 import { LocalStorageUtils } from './utils/localstorage';
 
 @NgModule({
@@ -18,9 +20,10 @@ import { LocalStorageUtils } from './utils/localstorage';
     AppRoutingModule,
     NavigationModule,
     BrowserAnimationsModule,
-    ToastrModule.forRoot()
+    ToastrModule.forRoot(),
+    ModalModule.forRoot()
   ],
-  providers: [LocalStorageUtils],
+  providers: [LocalStorageUtils, BsModalService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
