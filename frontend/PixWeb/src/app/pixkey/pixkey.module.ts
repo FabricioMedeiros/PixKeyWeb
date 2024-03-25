@@ -1,3 +1,4 @@
+
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
@@ -12,6 +13,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { NarikCustomValidatorsModule } from '@narik/custom-validators';
 import { PixKeyService } from './services/pixkey.service';
 import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask';
+import { NgxSpinnerModule } from 'ngx-spinner';
 
 
 @NgModule({
@@ -30,12 +32,12 @@ import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask';
     HttpClientModule,
     NarikCustomValidatorsModule,
     NgxMaskDirective, 
-    NgxMaskPipe
-  ]
-  ,
+    NgxMaskPipe,
+    NgxSpinnerModule
+  ],
   providers: [
     PixKeyService,
     provideNgxMask()  
-  ]
+  ],
 })
 export class PixkeyModule { }
