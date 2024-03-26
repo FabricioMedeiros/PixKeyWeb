@@ -2,10 +2,11 @@ import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { PixKey } from '../models/pixkey';
 import { Router } from '@angular/router';
 
-import { BsModalService, BsModalRef, ModalOptions } from 'ngx-bootstrap/modal';
+import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { ToastrService } from 'ngx-toastr';
 
 import { PixKeyService } from './../services/pixkey.service';
+import { NgxSpinnerService } from 'ngx-spinner';
 
 
 @Component({
@@ -26,10 +27,13 @@ export class ListComponent implements OnInit {
     private pixKeyService: PixKeyService, 
     private router: Router,
     private modalService: BsModalService,
+    private spinner: NgxSpinnerService,
     private toastr: ToastrService
   ) { }
 
   ngOnInit(): void {
+    this.spinner.show();
+    
     this.pixKeyService.getAllPixKeys().subscribe({
       next: pixKeys => {
         this.pixKeys = pixKeys;
@@ -37,7 +41,9 @@ export class ListComponent implements OnInit {
       error: error => {
         this.errorMessage = error;
       },
-    });    
+    }); 
+    
+    this.spinner.hide();
   }
 
   getKeyTypeDescription(keyType: number): string {
