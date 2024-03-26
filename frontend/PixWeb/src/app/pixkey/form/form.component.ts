@@ -7,6 +7,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, fromEvent, merge } from 'rxjs';
 import { documentValidator } from '../../utils/document-validation';
+import { NgxSpinnerService } from 'ngx-spinner';
 
 @Component({
   selector: 'app-form',
@@ -28,12 +29,12 @@ export class FormComponent implements OnInit, AfterViewInit {
 
   changesSaved: boolean = true;
   isEditMode: boolean = false;
-  isInvalidKey: boolean = false;
 
   constructor(private fb: FormBuilder,
     private pixKeyService: PixKeyService,
     private router: Router,
     private route: ActivatedRoute,
+    private spinner: NgxSpinnerService,
     private toastr: ToastrService) {
     this.validationMessages = {
       description: {
@@ -51,6 +52,14 @@ export class FormComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+    const resolvedData = this.route.snapshot.data['pixKey'];
+
+    if (resolvedData) {
+      this.spinner.show();
+      this.isEditMode = true;
+      this.pixKeyForm.patchValue(resolvedData);
+    }   
+    
     this.pixKeyForm = this.fb.group({
       id: ['', []],
       description: ['', [Validators.required]],
@@ -58,15 +67,6 @@ export class FormComponent implements OnInit, AfterViewInit {
       key: ['', [Validators.required]],
       isPersonalKey: [false]
     });
-
-    this.isInvalidKey = false;
-
-    const resolvedData = this.route.snapshot.data['pixKey'];
-
-    if (resolvedData) {
-      this.isEditMode = true;
-      this.pixKeyForm.patchValue(resolvedData);
-    }
 
     this.pixKeyForm.get('keyType')?.valueChanges.subscribe(keyType => {
       this.applyValidationAndMask(keyType);
@@ -80,7 +80,9 @@ export class FormComponent implements OnInit, AfterViewInit {
       }
 
       this.pixKeyForm.get('key')?.markAsPristine();
-    });
+    });    
+    
+    this.spinner.hide();   
   }
 
   ngAfterViewInit(): void {
