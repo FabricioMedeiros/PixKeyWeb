@@ -9,7 +9,6 @@ import { FormComponent } from './form/form.component';
 import { PixkeyAppComponent } from './pixkey.app.component';
 import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
 import { NarikCustomValidatorsModule } from '@narik/custom-validators';
 import { PixKeyService } from './services/pixkey.service';
 import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask';
@@ -29,7 +28,6 @@ import { NgxSpinnerModule } from 'ngx-spinner';
     PixkeyRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    HttpClientModule,
     NarikCustomValidatorsModule,
     NgxMaskDirective, 
     NgxMaskPipe,
