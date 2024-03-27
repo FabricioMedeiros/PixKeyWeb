@@ -55,7 +55,7 @@ namespace PixWeb.Application.Validators
 
         private bool ValidatePhoneNumber(string key)
         {
-            return key.Length >= 14 && key.Length <= 15;
+            return key.Length >= 10 && key.Length <= 11;
         }
     }
 }
