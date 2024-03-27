@@ -6,10 +6,17 @@ import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
 import { BsModalService, ModalModule } from 'ngx-bootstrap/modal';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 
 import { NavigationModule } from './navigation/navigation.module';
 import { LocalStorageUtils } from './utils/localstorage';
 import { NgxSpinnerModule } from "ngx-spinner";
+import { ErrorInterceptor } from "./services/error.handler.service";
+
+export const httpInterceptorProviders = [
+  { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
+];
+
 
 @NgModule({
   declarations: [
@@ -18,13 +25,14 @@ import { NgxSpinnerModule } from "ngx-spinner";
   imports: [
     BrowserModule,
     AppRoutingModule,
+    HttpClientModule,
     NavigationModule,
     BrowserAnimationsModule,
     NgxSpinnerModule,
     ToastrModule.forRoot(),
     ModalModule.forRoot(),
   ],
-  providers: [LocalStorageUtils, BsModalService],
+  providers: [LocalStorageUtils, BsModalService, httpInterceptorProviders],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   bootstrap: [AppComponent]
 })
