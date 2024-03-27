@@ -7,10 +7,11 @@ import { FooterComponent } from './footer/footer.component';
 import { RouterModule } from '@angular/router';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { MenuLoginComponent } from './menu-login/menu-login.component';
+import { ServiceUnavailableComponent } from './service-unavailable/service-unavailable.component';
 
 @NgModule({
-  declarations: [HomeComponent, MenuComponent, FooterComponent, NotFoundComponent, MenuLoginComponent],
+  declarations: [HomeComponent, MenuComponent, FooterComponent, NotFoundComponent, MenuLoginComponent, ServiceUnavailableComponent],
   imports: [CommonModule, RouterModule],
-  exports: [HomeComponent, MenuComponent, FooterComponent, NotFoundComponent],
+  exports: [HomeComponent, MenuComponent, FooterComponent, NotFoundComponent, ServiceUnavailableComponent],
 })
 export class NavigationModule {}
