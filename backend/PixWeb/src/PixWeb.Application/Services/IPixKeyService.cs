@@ -9,6 +9,6 @@ namespace PixWeb.Application.Services
         Task<PixKeyDto> GetByIdAsync(int id);
         Task<PixKeyDto> CreateAsync(PixKeyCreateDto pixKeyCreateDto);
         Task<PixKeyDto> UpdateAsync(PixKeyUpdateDto pixKeyUpdateDto);
-        Task<bool> DeleteAsync(string key);
+        Task<bool> DeleteAsync(int id);
     }
 }

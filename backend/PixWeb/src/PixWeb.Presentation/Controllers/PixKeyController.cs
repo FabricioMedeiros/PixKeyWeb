@@ -89,10 +89,10 @@ namespace PixWeb.API.Controllers
             return CustomResponse(updatedPixKey);
         }
 
-        [HttpDelete("{key}")]
-        public async Task<IActionResult> DeletePixKey(string key)
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeletePixKey(int id)
         {
-            var result = await _pixKeyService.DeleteAsync(key);
+            var result = await _pixKeyService.DeleteAsync(id);
 
             if (!result)
             {

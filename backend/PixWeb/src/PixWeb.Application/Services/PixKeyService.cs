@@ -92,9 +92,9 @@ namespace PixWeb.Application.Services
             return _mapper.Map<PixKeyDto>(updatedPixKey);
         }
 
-        public async Task<bool> DeleteAsync(string key)
+        public async Task<bool> DeleteAsync(int id)
         {
-            var existingPixKey = await _pixKeyRepository.GetByKeyAsync(_userId, key);
+            var existingPixKey = await _pixKeyRepository.GetByIdAsync(_userId, id);
 
             if (existingPixKey == null)
             {
