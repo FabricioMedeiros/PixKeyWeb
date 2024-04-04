@@ -13,6 +13,7 @@ import { NarikCustomValidatorsModule } from '@narik/custom-validators';
 import { PixKeyService } from './services/pixkey.service';
 import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask';
 import { NgxSpinnerModule } from 'ngx-spinner';
+import { KeyMaskPipe } from '../pipes/key-mask.pipe';
 
 
 @NgModule({
@@ -20,7 +21,8 @@ import { NgxSpinnerModule } from 'ngx-spinner';
     ListComponent,
     DeleteComponent,
     FormComponent,
-    PixkeyAppComponent
+    PixkeyAppComponent,
+    KeyMaskPipe
   ],
   imports: [
     CommonModule,
