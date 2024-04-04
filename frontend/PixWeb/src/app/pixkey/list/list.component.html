@@ -21,7 +21,8 @@
           <td class="align-middle">{{ pixKey.description }}</td>
           <td class="align-middle">{{ pixKey.isPersonalKey ? 'Sim' : 'Não' }}</td>
           <td class="align-middle">{{ getKeyTypeDescription(pixKey.keyType) }}</td>
-          <td class="align-middle">{{ pixKey.key }}</td>
+          <!-- <td class="align-middle">{{ pixKey.key }}</td> -->
+          <td class="align-middle">{{ pixKey.key | keyMask: pixKey.keyType }}</td>
           <td class="d-flex justify-content-center align-items-center">
             <button class="btn btn-action btn-warning" (click)="editPixKey(pixKey)">
               <i class="fas fa-edit"></i>
