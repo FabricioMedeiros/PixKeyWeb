@@ -5,14 +5,15 @@ import { ListComponent } from './list/list.component';
 import { FormComponent } from './form/form.component';
 import { DeleteComponent } from './delete/delete.component';
 import { pixKeyResolver } from './services/pixkey.resolve';
+import { canActivate, canDeactivate } from './services/pixkey.guard';
 
 const routes: Routes = [
   {
       path: '', component: PixkeyAppComponent,
       children: [
-          { path: 'list', component: ListComponent},
-          { path: 'new', component: FormComponent},
-          { path: 'edit/:id', component: FormComponent, resolve: { pixKey: pixKeyResolver }},
+          { path: 'list', component: ListComponent, canActivate: [canActivate]},
+          { path: 'new', component: FormComponent, canActivate: [canActivate], canDeactivate: [canDeactivate]},
+          { path: 'edit/:id', component: FormComponent, canActivate: [canActivate], canDeactivate: [canDeactivate], resolve: { pixKey: pixKeyResolver }},
           { path: 'delete:id', component: DeleteComponent}
       ]
   }
