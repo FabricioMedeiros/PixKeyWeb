@@ -52,14 +52,6 @@ export class FormComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    const resolvedData = this.route.snapshot.data['pixKey'];
-
-    if (resolvedData) {
-      this.spinner.show();
-      this.isEditMode = true;
-      this.pixKeyForm.patchValue(resolvedData);
-    }   
-    
     this.pixKeyForm = this.fb.group({
       id: ['', []],
       description: ['', [Validators.required]],
@@ -67,6 +59,20 @@ export class FormComponent implements OnInit, AfterViewInit {
       key: ['', [Validators.required]],
       isPersonalKey: [false]
     });
+
+    this.applyValidationAndMask(this.pixKeyForm.get('keyType')?.value);
+
+    const resolvedData = this.route.snapshot.data['pixKey'];
+
+    if (resolvedData) {
+      this.spinner.show();
+      this.isEditMode = true;
+      this.pixKeyForm.patchValue(resolvedData);
+
+      const currentKeyValue = this.pixKeyForm.get('key')?.value;
+      this.applyValidationAndMask(resolvedData.keyType.toString());
+      this.pixKeyForm.get('key')?.setValue(currentKeyValue);
+    }    
 
     this.pixKeyForm.get('keyType')?.valueChanges.subscribe(keyType => {
       this.applyValidationAndMask(keyType);
