@@ -23,7 +23,7 @@ export class ErrorInterceptor implements HttpInterceptor {
                     this.router.navigate(['/service-unavailable']);
                 } else if (error.status === 401) {
                     this.localStorageUtil.clearLocalUserData();
-                    this.router.navigate(['/account/login']);
+                    this.router.navigate(['/account/login'], {queryParams: {returnUrl: this.router.url}});
                 }
 
                 throw error;

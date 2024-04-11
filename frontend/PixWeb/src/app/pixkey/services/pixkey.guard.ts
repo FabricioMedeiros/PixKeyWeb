@@ -1,4 +1,4 @@
-import { CanActivateFn, CanDeactivateFn, Router, ActivatedRouteSnapshot, RouterStateSnapshot } from "@angular/router";
+import { CanActivateFn, CanDeactivateFn, Router, ActivatedRouteSnapshot, RouterStateSnapshot, NavigationExtras } from "@angular/router";
 import { LocalStorageUtils } from "../../utils/localstorage";
 import { inject } from "@angular/core";
 import { FormComponent } from "../form/form.component";
@@ -8,7 +8,7 @@ export const canActivate: CanActivateFn = (route: ActivatedRouteSnapshot, state:
   const router = inject(Router);
 
   if (!localStorageUtils.getTokenUser()) {
-    router.navigate(['/home']);
+    router.navigate(['/account/login'], {queryParams: { returnUrl: state.url}});
     return false;
   }
   
