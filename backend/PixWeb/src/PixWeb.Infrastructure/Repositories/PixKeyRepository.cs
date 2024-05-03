@@ -14,9 +14,24 @@ namespace PixWeb.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<PixKey>> GetAllAsync(string userId)
+        public async Task<(IEnumerable<PixKey> pixKeys, int totalRecords)> GetAllAsync(string userId, int? page = null, int? pageSize = null)
         {
-            return await _context.PixKeys.Where(key => key.UserId == userId).ToListAsync();
+            var query = _context.PixKeys.Where(key => key.UserId == userId);
+
+            var totalRecords = await query.CountAsync();
+
+            if (page.HasValue && pageSize.HasValue)
+            {
+                var pixKeys = await query.Skip((page.Value - 1) * pageSize.Value)
+                                         .Take(pageSize.Value)
+                                         .ToListAsync();
+                return (pixKeys, totalRecords);
+            }
+            else
+            {
+                var pixKeys = await query.ToListAsync();
+                return (pixKeys, totalRecords);
+            }
         }
 
         public async Task<PixKey> GetByIdAsync(string userId, int id)
