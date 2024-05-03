@@ -12,7 +12,7 @@ namespace PixWeb.Application.Services
         private readonly IPixKeyRepository _pixKeyRepository;
         private readonly IMapper _mapper;
         private readonly ClaimsPrincipal _currentUser;
-        private readonly string _userId;
+        private readonly string? _userId;
 
         public PixKeyService(IPixKeyRepository pixKeyRepository, 
             IMapper mapper,
@@ -25,15 +25,15 @@ namespace PixWeb.Application.Services
             _userId = _currentUser.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         }
 
-        public async Task<IEnumerable<PixKeyDto>> GetAllAsync()
+        public async Task<PixKeyListDto> GetAllAsync(int? page = null, int? pageSize = null)
         {
             if (string.IsNullOrEmpty(_userId))
-            {  
-                return Enumerable.Empty<PixKeyDto>();
+            {
+                return new PixKeyListDto { PixKeys = Enumerable.Empty<PixKeyDto>(), TotalRecords = 0 };
             }
 
-            var pixKeys = await _pixKeyRepository.GetAllAsync(_userId);
-            return _mapper.Map<IEnumerable<PixKeyDto>>(pixKeys);
+            var (pixKeys, totalRecords) = await _pixKeyRepository.GetAllAsync(_userId, page, pageSize);
+            return new PixKeyListDto { PixKeys = _mapper.Map<IEnumerable<PixKeyDto>>(pixKeys), TotalRecords = totalRecords, Page = page ?? 1, PageSize = pageSize ?? totalRecords };
         }
 
         public async Task<PixKeyDto> GetByKeyAsync(string key)
