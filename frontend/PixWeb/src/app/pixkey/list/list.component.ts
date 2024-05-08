@@ -19,6 +19,9 @@ export class ListComponent implements OnInit {
   public pixKeys: PixKey[] = [];
   errorMessage: string = '';
   selectedPixKey!: PixKey;
+
+  currentPage : number = 1;
+  totalPages : number = 1;
   
   bsModalRef!: BsModalRef;
   @ViewChild('deleteModal') deleteModal!: TemplateRef<any>;  
@@ -32,20 +35,43 @@ export class ListComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.spinner.show();
+
+    let storedPage = localStorage.getItem('currentPagePixKeyList');
+
+    if (storedPage) {
+      this.currentPage = parseInt(storedPage, 10);
+      localStorage.removeItem('currentPagePixKeyList'); 
+      storedPage = null;
+    }
     
-    this.pixKeyService.getAllPixKeys().subscribe({
-      next: pixKeys => {
-        this.pixKeys = pixKeys;
+    this.loadPixKeys();
+  }
+
+  onPageChanged(page: number) {
+    this.currentPage = page;
+    this.loadPixKeys();
+  }
+
+  loadPixKeys(): void {
+    this.spinner.show();
+
+    this.pixKeys = []; 
+    
+    this.pixKeyService.getAllPixKeys(this.currentPage, 4).subscribe({
+      next: response => {      
+        this.pixKeys = response.pixKeys;
+        this.currentPage = response.page;    
+        this.totalPages = Math.ceil(response.totalRecords / response.pageSize);
       },
       error: error => {
         this.errorMessage = error;
       },
+      complete: () => {
+        this.spinner.hide();
+      }
     }); 
-    
-    this.spinner.hide();
   }
-
+  
   getKeyTypeDescription(keyType: number): string {
     switch (keyType) {
       case 0:
@@ -62,6 +88,7 @@ export class ListComponent implements OnInit {
   }
 
   editPixKey(pixKey: PixKey) {
+    localStorage.setItem('currentPagePixKeyList', this.currentPage.toString());
     this.router.navigate(['/pixkey/edit', pixKey.id]);
   }
 
