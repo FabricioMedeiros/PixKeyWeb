@@ -14,6 +14,7 @@ import { PixKeyService } from './services/pixkey.service';
 import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { KeyMaskPipe } from '../pipes/key-mask.pipe';
+import { SharedModule } from '../shared/shared.module';
 
 
 @NgModule({
@@ -33,7 +34,8 @@ import { KeyMaskPipe } from '../pipes/key-mask.pipe';
     NarikCustomValidatorsModule,
     NgxMaskDirective, 
     NgxMaskPipe,
-    NgxSpinnerModule
+    NgxSpinnerModule,
+    SharedModule,
   ],
   providers: [
     PixKeyService,
