@@ -9,13 +9,13 @@ export class PixKeyService extends BaseService {
 
     constructor(private http: HttpClient) { super(); }
 
-    getAllPixKeys(): Observable<PixKey[]> {
-        const headers = this.GetAuthHeaderJson();
-
+    getAllPixKeys(page: number, pageSize: number): Observable<any> {
+        const headers = this.GetAuthHeaderJson();     
+      
         return this.http
-            .get<PixKey[]>(this.UrlServiceV1 + "pixkey", headers)
-            .pipe(catchError(super.serviceError));
-    }
+          .get<any>(`${this.UrlServiceV1}pixkey?page=${page}&pageSize=${pageSize}`, headers)
+          .pipe(catchError(super.serviceError));
+      }
 
     getPixKeyById(id: number): Observable<PixKey> {
         const headers = this.GetAuthHeaderJson();
