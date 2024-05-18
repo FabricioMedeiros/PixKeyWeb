@@ -1,14 +1,13 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PaginationComponent } from './pagination/pagination.component';
-import { SearchBarComponent } from './search-bar/search-bar.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-
-
+import { SearchBarComponent } from './search-bar/search-bar.component';
 
 @NgModule({
   declarations: [
-    PaginationComponent
+    PaginationComponent,
+    SearchBarComponent
   ],
   imports: [
     CommonModule,
@@ -16,7 +15,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     ReactiveFormsModule,
   ],
   exports: [
-    PaginationComponent
+    PaginationComponent,
+    SearchBarComponent
   ]
 })
 export class SharedModule { }
