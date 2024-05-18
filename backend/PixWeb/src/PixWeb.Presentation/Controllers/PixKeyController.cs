@@ -20,26 +20,13 @@ namespace PixWeb.API.Controllers
         {
             _pixKeyService = pixKeyService;
         }
-
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<PixKeyDto>>> GetPixKeys()
+        public async Task<ActionResult<PixKeyListDto>> GetPixKeys([FromQuery] string? field = null, [FromQuery] string? value = null, [FromQuery] int? page = null, [FromQuery] int? pageSize = null)
         {
-            var pixKeys = await _pixKeyService.GetAllAsync();
-            return Ok(pixKeys);
+            var pixKeys = await _pixKeyService.GetAllAsync(field, value, page, pageSize);
+            return CustomResponse(pixKeys);
         }
 
-        [HttpGet("key/{key}")]
-        public async Task<ActionResult<PixKeyDto>> GetPixKey(string key)
-        {
-            var pixKey = await _pixKeyService.GetByKeyAsync(key);
-
-            if (pixKey == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(pixKey);
-        }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<PixKeyDto>> GetPixKeyById(int id)
@@ -52,6 +39,7 @@ namespace PixWeb.API.Controllers
             }
 
             return Ok(pixKey);
+
         }
 
         [HttpPost]
@@ -68,7 +56,6 @@ namespace PixWeb.API.Controllers
             return CustomResponse(createdPixKey);
         }
 
-
         [HttpPut()]
         public async Task<ActionResult<PixKeyDto>> UpdatePixKey(PixKeyUpdateDto pixKeyUpdateDto)
         {
@@ -83,7 +70,7 @@ namespace PixWeb.API.Controllers
 
             if (updatedPixKey == null)
             {
-                return NotFound();
+                return CustomResponse();
             }
 
             return CustomResponse(updatedPixKey);
@@ -96,7 +83,7 @@ namespace PixWeb.API.Controllers
 
             if (!result)
             {
-                return NotFound();
+                return CustomResponse();
             }
 
             return Ok();
