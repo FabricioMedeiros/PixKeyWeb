@@ -18,6 +18,7 @@ PixKeyWeb é uma aplicação desenvolvida com C#, .NET 6, Entity Framework e Ang
 - ![.NET 6](https://img.shields.io/badge/.NET%206-blueviolet)
 - ![API](https://img.shields.io/badge/API-Pattern-red)
 - ![Entity Framework Core](https://img.shields.io/badge/Entity%20Framework%20Core-green)
+- ![SQL Server](https://img.shields.io/badge/SQL%20Server-CC2927)
 - ![Clean Architecture](https://img.shields.io/badge/Clean%20Architecture-yellow)
 - ![SOLID](https://img.shields.io/badge/SOLID-orange)
 - ![Clean Code](https://img.shields.io/badge/Clean%20Code-brightgreen)
