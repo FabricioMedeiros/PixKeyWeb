@@ -54,16 +54,6 @@ PixKeyWeb é uma aplicação desenvolvida com C#, .NET 6, Entity Framework e Ang
   ```bash
    cd PixWeb/frontend/PixWeb
 
-2. Instale as dependências do frontend:
-   ```bash
-   npm install   
-
-3. Execute a aplicação:
-   ```bash
-   ng serve
-
-4. Abra seu navegador e acesse `http://localhost:4200` para visualizar a aplicação.
-
 ## 🤝 Contribuições
 
 Contribuições são bem-vindas! Se você deseja contribuir com o projeto, siga estas etapas:
