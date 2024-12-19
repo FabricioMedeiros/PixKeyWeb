@@ -9,13 +9,18 @@ export class PixKeyService extends BaseService {
 
     constructor(private http: HttpClient) { super(); }
 
-    getAllPixKeys(page: number, pageSize: number): Observable<any> {
-        const headers = this.GetAuthHeaderJson();     
-      
+    getAllPixKeys(page: number, pageSize: number, field?: string, value?: string): Observable<any> {
+        const headers = this.GetAuthHeaderJson();
+        let url = `${this.UrlServiceV1}pixkey?page=${page}&pageSize=${pageSize}`;
+    
+        if (field && value) {
+            url += `&field=${field}&value=${value}`;
+        }
+    
         return this.http
-          .get<any>(`${this.UrlServiceV1}pixkey?page=${page}&pageSize=${pageSize}`, headers)
-          .pipe(catchError(super.serviceError));
-      }
+            .get<any>(url, headers)
+            .pipe(catchError(super.serviceError));
+    }    
 
     getPixKeyById(id: number): Observable<PixKey> {
         const headers = this.GetAuthHeaderJson();
@@ -55,4 +60,27 @@ export class PixKeyService extends BaseService {
             .pipe(catchError(super.serviceError));
     }
 
+    saveLocalCurrentPageList(page: number): void {
+        localStorage.setItem('currentPagePixKeyList', page.toString());
+    }
+
+    getLocalCurrentPageList(): string {
+        return localStorage.getItem('currentPagePixKeyList') || '';
+    }
+
+    clearLocalCurrentPageList(): void {
+        localStorage.removeItem('currentPagePixKeyList'); 
+    }
+
+    saveLocalSearchTerm(searchTerm: string): void {
+        localStorage.setItem('searchTermPixKeyList', searchTerm);
+    }
+
+    getLocalSearchTerm(): string {
+        return localStorage.getItem('searchTermPixKeyList') || '';
+    }
+
+    clearLocalSearchTerm(): void {
+        localStorage.removeItem('searchTermPixKeyList'); 
+    }
 }

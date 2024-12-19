@@ -1,8 +1,30 @@
 <div class="container">
   <ngx-spinner bdColor = "rgba(0, 0, 0, 0.8)" size = "medium" color = "#fff" type = "ball-pulse" [fullScreen] = "true"><p style="color: white; font-size: 20px;" > Carregando... </p></ngx-spinner>
   <div class="top-container">
-    <h1>Chaves Pix</h1>
-    <a class="btn btn-new bg-success" [routerLink]="['/pixkey/new']">Cadastrar</a>
+    <h1>Chaves Pix</h1>    
+    <div *ngIf="errorMessage.length > 0"  class="alert alert-danger">
+      <h3>Atenção!</h3>
+      <ul>
+        <li>{{ errorMessage }}</li>
+      </ul>
+    </div>    
+    
+    <app-search-bar 
+      [pageSizeOptions]="[10, 30, 50]"
+      [initialSearchTerm]="searchTerm"
+      [searchTerm]="searchTerm" 
+      [placeholder]="placeholderSearch" 
+      (search)="onSearch($event)" 
+      (clear)="clearSearch()">
+    </app-search-bar>
+
+    <div *ngIf="pixKeys.length === 0 && searchTerm !== '' && !errorMessage && !loadingKeys" class="no-results-message">
+      Nenhum resultado encontrado.
+    </div>
+
+    <a class="btn btn-new bg-success" (click)="addPixKey()">
+      <i class="fas fa-plus"></i> Cadastrar
+    </a>    
   </div>
 
   <div class="table-container">
@@ -33,11 +55,14 @@
         </tr>
       </tbody>
       </table>
-      <app-pagination
-        [currentPage]="currentPage"
-        [totalPages]="totalPages"
-        (pageChanged)="onPageChanged($event)"
->     </app-pagination>
+      
+      <div *ngIf="pixKeys.length > 0">
+        <app-pagination 
+        [currentPage]="currentPage" 
+        [totalPages]="totalPages" 
+        (pageChanged)="onPageChanged($event)">
+        </app-pagination>
+      </div>      
     </div>
 
   <!-- Modal -->

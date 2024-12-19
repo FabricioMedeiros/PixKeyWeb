@@ -1,4 +1,9 @@
 <div class="search-container">
+    <div><strong>Exibir:</strong></div>
+    <select id="pageSizeSelect" [(ngModel)]="selectedPageSize" (change)="onPageSizeChange()" class="form-select"
+        aria-label="Quantidade de Registros" title="Selecione a quantidade de registros por página">
+        <option *ngFor="let option of pageSizeOptions" [value]="option">{{ option }} por página</option>
+    </select>
     <input type="text" [(ngModel)]="searchTerm" (input)="onInput($event)" [placeholder]="placeholder" class="search-input">
     <button (click)="onSearch()" class="btn btn-success"><i class="fas fa-search text-white"></i></button>
     <button (click)="clearSearch()" class="btn btn-danger"><i class="fas fa-times text-white"></i></button>

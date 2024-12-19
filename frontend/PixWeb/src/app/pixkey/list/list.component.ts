@@ -1,12 +1,13 @@
-import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { PixKey } from '../models/pixkey';
-import { Router } from '@angular/router';
+import { Router, NavigationEnd, Event } from '@angular/router';
 
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { ToastrService } from 'ngx-toastr';
 
 import { PixKeyService } from './../services/pixkey.service';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { filter, map } from 'rxjs';
 
 
 @Component({
@@ -21,7 +22,13 @@ export class ListComponent implements OnInit {
   selectedPixKey!: PixKey;
 
   currentPage : number = 1;
+  pageSize: number = 10;
   totalPages : number = 1;
+ 
+  searchTerm : string = '';
+  loadingKeys : boolean = true;
+
+  @Input() placeholderSearch: string = 'Pesquise pela descrição';
   
   bsModalRef!: BsModalRef;
   @ViewChild('deleteModal') deleteModal!: TemplateRef<any>;  
@@ -32,46 +39,102 @@ export class ListComponent implements OnInit {
     private modalService: BsModalService,
     private spinner: NgxSpinnerService,
     private toastr: ToastrService
-  ) { }
+  ) { 
+    this.router.events.pipe(
+      filter((e: Event): e is NavigationEnd => e instanceof NavigationEnd),
+      map((e: NavigationEnd) => e)
+    ).subscribe(event => {
+      if (!event.url.includes('/pixkey')){
+        this.pixKeyService.clearLocalCurrentPageList();
+        this.pixKeyService.clearLocalSearchTerm();
+      }
+    });
+  }
 
   ngOnInit(): void {
+    let storedPage = this.pixKeyService.getLocalCurrentPageList();
+    let storedSearchTerm = this.pixKeyService.getLocalSearchTerm();
 
-    let storedPage = localStorage.getItem('currentPagePixKeyList');
-
-    if (storedPage) {
+    if (storedPage.trim() !== ''){
       this.currentPage = parseInt(storedPage, 10);
-      localStorage.removeItem('currentPagePixKeyList'); 
-      storedPage = null;
+      this.pixKeyService.clearLocalCurrentPageList();
+      storedPage = '';
     }
     
-    this.loadPixKeys();
+    if (storedSearchTerm.trim() !== '') {
+      this.searchTerm = storedSearchTerm;
+      this.loadPixKeys();
+      storedSearchTerm = '';    
+    }
+    else {
+      this.loadPixKeys();
+    }    
   }
 
   onPageChanged(page: number) {
     this.currentPage = page;
-    this.loadPixKeys();
+
+    let storedSearchTerm = this.pixKeyService.getLocalSearchTerm();
+
+    if (storedSearchTerm) {
+      this.searchTerm = storedSearchTerm;
+      this.loadPixKeys();      
+    }
+    else {
+      this.loadPixKeys();
+    }    
   }
 
   loadPixKeys(): void {
     this.spinner.show();
-
+    this.loadingKeys = true;
     this.pixKeys = []; 
-    
-    this.pixKeyService.getAllPixKeys(this.currentPage, 4).subscribe({
-      next: response => {      
-        this.pixKeys = response.pixKeys;
-        this.currentPage = response.page;    
-        this.totalPages = Math.ceil(response.totalRecords / response.pageSize);
-      },
-      error: error => {
-        this.errorMessage = error;
-      },
-      complete: () => {
-        this.spinner.hide();
-      }
-    }); 
+
+    if (this.searchTerm !== null && this.searchTerm !== undefined && this.searchTerm.trim() !== '') {
+      this.pixKeyService.getAllPixKeys(this.currentPage, this.pageSize, 'Description', this.searchTerm).subscribe({
+        next: response => {
+          this.processLoadPixKeysSucess(response);
+        },
+        error: error => {
+          this.processLoadPixKeysFail(error);
+        },
+        complete: () => {
+          this.processLoadPixKeysComplete();
+        }
+      });
+    } else {
+      this.pixKeyService.getAllPixKeys(this.currentPage, 20).subscribe({
+        next: response => {      
+          this.processLoadPixKeysSucess(response);
+        },
+        error: error => {
+          this.processLoadPixKeysFail(error);
+        },
+        complete: () => {
+          this.processLoadPixKeysComplete();
+        }
+      }); 
+    }    
+  }  
+
+  private processLoadPixKeysSucess(response: any) {
+    this.pixKeys = response.data.pixKeys;
+    this.currentPage = response.data.page;
+    this.totalPages = Math.ceil(response.data.totalRecords / response.data.pageSize);
   }
-  
+
+  private processLoadPixKeysFail(error: any) {
+    this.loadingKeys = false;
+    this.errorMessage = error.error.errors[0];
+    this.toastr.error('Ocorreu um erro.', 'Atenção');
+    this.spinner.hide();
+  }
+
+  private processLoadPixKeysComplete() {
+    this.loadingKeys = false;
+    this.spinner.hide();
+  }
+
   getKeyTypeDescription(keyType: number): string {
     switch (keyType) {
       case 0:
@@ -87,8 +150,15 @@ export class ListComponent implements OnInit {
     }
   }
 
+  addPixKey(){
+    this.pixKeyService.clearLocalCurrentPageList();
+    this.pixKeyService.clearLocalSearchTerm();
+    this.router.navigate(['/pixkey/new']);
+  }
+
   editPixKey(pixKey: PixKey) {
-    localStorage.setItem('currentPagePixKeyList', this.currentPage.toString());
+    this.pixKeyService.saveLocalCurrentPageList(this.currentPage);
+    this.pixKeyService.saveLocalSearchTerm(this.searchTerm);
     this.router.navigate(['/pixkey/edit', pixKey.id]);
   }
 
@@ -100,15 +170,15 @@ export class ListComponent implements OnInit {
   confirmDelete(pixKey: PixKey): void {  
     this.pixKeyService.deletePixKey(pixKey.id).subscribe({
       next: success => {
-        this.processSuccess(success, pixKey);
+        this.processSuccessDelete(success, pixKey);
       },
       error: error => {
-        this.processFail(error);
+        this.processFailDelete(error);
       }
     });
   }
 
-  processSuccess(response: any, pixKey: PixKey) {
+  processSuccessDelete(response: any, pixKey: PixKey) {
     this.pixKeys = this.pixKeys.filter(item => item.id !== pixKey.id);
     this.bsModalRef.hide();
     
@@ -122,7 +192,26 @@ export class ListComponent implements OnInit {
     }
   }
 
-  processFail(fail: any) {
+  processFailDelete(fail: any) {
     this.toastr.error('Ocorreu um erro.', 'Atenção');
+  }
+
+  onSearch(event: { pageSize: number, term: string }): void {
+    this.pageSize = event.pageSize;
+    this.searchTerm = event.term;
+    this.currentPage = 1;
+    this.pixKeyService.saveLocalSearchTerm(this.searchTerm);
+
+    this.loadPixKeys();
+  }
+
+  clearSearch(): void {
+    if (this.pixKeyService.getLocalSearchTerm() === '')
+      return;
+
+    this.searchTerm  = '';
+    this.currentPage = 1;
+    this.pixKeyService.clearLocalSearchTerm();
+    this.loadPixKeys();
   }
 }
