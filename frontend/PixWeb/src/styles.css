@@ -71,9 +71,13 @@ textarea {
     z-index: 999;
 }
 
-.footer {
-    position: relative;
-    bottom: 0;
-    width: 100%;
-    line-height: 60px;
-}
+.no-results-message {
+    text-align: center;
+    margin: 20px 0;
+    padding: 10px;
+    background-color: #f8d7da; 
+    color: #721c24; 
+    border: 1px solid #f5c6cb; 
+    border-radius: 4px;
+  }
+  
