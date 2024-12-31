@@ -1,18 +1,20 @@
-.register {
+.register-container {
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
+    min-height: calc(100vh - 120px);
+    overflow-y: auto;
 }
 
 .account-register {
+    background-color: #ffffff;
     width: 400px;
     padding: 20px;
     border-radius: 5px;
     box-shadow: 0 0 20px rgba(0, 128, 0, 0.5);
-    margin-bottom: 20px;
-    height: 100%;
-    overflow-y: auto;
+    margin: 15px 0 20px 0;
+    max-height: 80vh;
 }
 
 .account-register h1 {
@@ -45,57 +47,8 @@
     opacity: 0.8;
 }
 
-.custom-checkbox {
-    position: relative;
-    padding-left: 27px;
-    margin-bottom: 12px;
-    cursor: pointer;
-    font-size: 13px;
-}
-
-.custom-checkbox input {
-    position: absolute;
-    opacity: 0;
-    cursor: pointer;
-    height: 0;
-    width: 0;
-}
-
-.custom-checkbox .checkmark {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 20px;
-    width: 20px;
-    background-color: #bfbcbc;
-}
-
-.custom-checkbox:hover input~.checkmark {
-    background-color: #747474;
-}
-
-.custom-checkbox input:checked~.checkmark {
-    background-color: #2196F3;
-}
-
-.custom-checkbox .checkmark:after {
-    content: "";
-    position: absolute;
-    display: none;
-}
-
-.custom-checkbox input:checked~.checkmark:after {
-    display: block;
-}
-
-.custom-checkbox .checkmark:after {
-    left: 9px;
-    top: 5px;
-    width: 5px;
-    height: 10px;
-    border: solid white;
-    border-width: 0 3px 3px 0;
-    transform: rotate(45deg);
+.alert{
+  margin-top: 15px;
 }
 
 @media (max-width: 767px) {

@@ -1,14 +1,20 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body{
-  height: 100%;
+.card-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    padding: 10px 40px;
+    box-sizing: border-box;
 }
 
 .card {
-  max-height: 80vh;
-  overflow-y: auto;
+    width: 100%;
+    max-width: 700px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+}
+
+.card-header {
+    font-size: 18px;
+    margin: 0;
+    padding: 10px;
 }

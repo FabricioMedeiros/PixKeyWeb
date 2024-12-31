@@ -21,12 +21,13 @@ export class LoginComponent  implements OnInit, AfterViewInit {
   errors: any[] = [];
   loginForm!: FormGroup;
   user!: User;
+  hidePassword: boolean = true;
 
   validationMessages!: ValidationMessages;
   genericValidator!: GenericValidator;
   displayMessage: DisplayMessage = {};
 
-  returnUrl: String;
+  returnUrl: String;  
 
   constructor(private fb: FormBuilder, private accountService: AccountService,
     private router: Router, private route : ActivatedRoute, private toastr: ToastrService) {   
@@ -86,7 +87,6 @@ export class LoginComponent  implements OnInit, AfterViewInit {
 
     if (toast) {
       toast.onHidden.subscribe(() => {
-        console.log(this.returnUrl);
         this.returnUrl ? this.router.navigate([this.returnUrl]) : this.router.navigate(['/home']);
       });
     }
@@ -95,6 +95,10 @@ export class LoginComponent  implements OnInit, AfterViewInit {
   processFail(fail: any) {
     this.errors = fail.error.errors;
     this.toastr.error('Ocorreu um erro.', 'Atenção');
+  }
+
+  togglePasswordVisibility() {
+    this.hidePassword = !this.hidePassword;
   }
 }
 
