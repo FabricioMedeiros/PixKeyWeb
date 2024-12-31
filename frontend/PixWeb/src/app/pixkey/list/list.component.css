@@ -4,14 +4,14 @@
 
 .top-container h1 {
   text-align: center;
-  font-size: 30px;
+  font-size: 28px;
   font-weight: bold;
-  margin-top: 15px;
 }
 
 .btn-new {
   align-self: start;
   margin-bottom: 10px;
+  color: white !important;
 }
 
 .table-container {
@@ -32,22 +32,21 @@
   border: 1px solid #ddd;
 }
 
-
 th, td {
   padding: 10px;
   text-align: left;
   vertical-align: middle; 
 }
 
-.btn-new{
-  font-weight: bold;
-  color: white !important;
+.col-actions {
+  width: 140px; 
+  height: auto;
+  align-items: center; 
+  gap: 10px;
 }
 
 .btn-action {
-  margin-right: 10px;
-  display: inline-flex;
-  align-items: center; 
+  width: 50px;
 }
 
 .btn-primary {
