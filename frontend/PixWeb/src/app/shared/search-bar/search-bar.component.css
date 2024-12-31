@@ -1,28 +1,77 @@
-.search-container {
+.search-bar-container {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin: 15px 0;
+  }
+  
+  .search-bar-controls {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  
+  .search-bar-row {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    border: 1px solid #ccc;
-    padding: 15px 15px;
-    margin: 15px 0 10px 0;
-}
-
-.search-container select {
+    gap: 10px;
+    flex-wrap: nowrap;
+  }
+  
+  .search-bar-input-buttons {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+  }
+  
+  .search-bar-controls select {
     padding: 6px;
     width: 150px;
-    margin: 0 10px 0 5px;
   }
-
-.search-input {
-    flex: 1;
-    padding: 5px;
-    width: calc(100% - 110px); 
-    max-width: none;
-}
-
-.search-container button {
-    margin-left: 10px;
-    padding: 5px 10px;
-    cursor: pointer;
-}
-
+  
+  .search-bar-controls input {
+    flex: 1; 
+  }
+  
+  .search-bar-controls button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 38px;
+    width: 45px;
+    gap: 5px;
+  }
+  
+  .search-bar-controls div {
+    font-weight: bold;
+  }
+  
+  @media (max-width: 768px) {
+    .search-bar-controls {
+      flex-direction: column; 
+    }
+  
+    .search-bar-row {
+      flex-direction: row; 
+      width: 100%;
+    }
+  
+    .search-bar-controls select {
+      width: 100%;
+    }
+  
+    .search-bar-input-buttons input {
+      flex: 1;
+      min-width: 100px;
+    }
+  
+    .search-bar-input-buttons button {
+      flex: 0;
+      min-width: 40px;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+  
