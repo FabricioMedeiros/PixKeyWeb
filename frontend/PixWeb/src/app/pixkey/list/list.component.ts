@@ -91,7 +91,7 @@ export class ListComponent implements OnInit {
     this.pixKeys = []; 
 
     if (this.searchTerm !== null && this.searchTerm !== undefined && this.searchTerm.trim() !== '') {
-      this.pixKeyService.getAllPixKeys(this.currentPage, this.pageSize, 'Description', this.searchTerm).subscribe({
+        this.pixKeyService.getAllPixKeys(this.currentPage, this.pageSize, 'Description', this.searchTerm).subscribe({
         next: response => {
           this.processLoadPixKeysSucess(response);
         },
@@ -103,7 +103,7 @@ export class ListComponent implements OnInit {
         }
       });
     } else {
-      this.pixKeyService.getAllPixKeys(this.currentPage, 20).subscribe({
+      this.pixKeyService.getAllPixKeys(this.currentPage, this.pageSize).subscribe({
         next: response => {      
           this.processLoadPixKeysSucess(response);
         },
