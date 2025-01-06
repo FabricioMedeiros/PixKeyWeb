@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using PixWeb.Application.Dtos;
 using PixWeb.Application.Notifications;
 using PixWeb.Domain.Entities;
 using PixWeb.Domain.Interfaces;
-using System.Security.Claims;
 
 namespace PixWeb.Application.Services
 {
@@ -11,46 +11,50 @@ namespace PixWeb.Application.Services
     {
         private readonly IPixKeyRepository _pixKeyRepository;
         private readonly IMapper _mapper;
-        private readonly ClaimsPrincipal _currentUser;
-        private readonly string? _userId;
 
-        public PixKeyService(IPixKeyRepository pixKeyRepository, 
+        public PixKeyService(
+            IPixKeyRepository pixKeyRepository,
             IMapper mapper,
             INotificator notificator,
-            ClaimsPrincipal currentUser) : base(notificator, currentUser)
+            IHttpContextAccessor httpContextAccessor)
+            : base(notificator, httpContextAccessor)
         {
             _pixKeyRepository = pixKeyRepository ?? throw new ArgumentNullException(nameof(pixKeyRepository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            _currentUser = currentUser ?? throw new ArgumentNullException(nameof(currentUser));
-            _userId = _currentUser.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         }
 
         public async Task<PixKeyListDto> GetAllAsync(string? field = null, string? value = null, int? page = null, int? pageSize = null)
         {
-            if (string.IsNullOrEmpty(_userId))
+            if (string.IsNullOrEmpty(userId))
             {
                 return new PixKeyListDto { PixKeys = Enumerable.Empty<PixKeyDto>(), TotalRecords = 0 };
             }
 
-            var (pixKeys, totalRecords) = await _pixKeyRepository.GetAllAsync(_userId, field, value, page, pageSize);
-            return new PixKeyListDto { PixKeys = _mapper.Map<IEnumerable<PixKeyDto>>(pixKeys), TotalRecords = totalRecords, Page = page ?? 1, PageSize = pageSize ?? totalRecords };
+            var (pixKeys, totalRecords) = await _pixKeyRepository.GetAllAsync(userId, field, value, page, pageSize);
+            return new PixKeyListDto
+            {
+                PixKeys = _mapper.Map<IEnumerable<PixKeyDto>>(pixKeys),
+                TotalRecords = totalRecords,
+                Page = page ?? 1,
+                PageSize = pageSize ?? totalRecords
+            };
         }
 
         public async Task<PixKeyDto> GetByIdAsync(int id)
         {
-            var pixKey = await _pixKeyRepository.GetByIdAsync(_userId, id);
+            var pixKey = await _pixKeyRepository.GetByIdAsync(userId, id);
             return _mapper.Map<PixKeyDto>(pixKey);
         }
 
         public async Task<PixKeyDto> CreateAsync(PixKeyCreateDto pixKeyCreateDto)
         {
-            var existingPixKeys = await _pixKeyRepository.GetAllAsync(_userId, "Key", pixKeyCreateDto.Key);
+            var existingPixKeys = await _pixKeyRepository.GetAllAsync(userId, "Key", pixKeyCreateDto.Key);
 
             if (existingPixKeys.pixKeys.Any())
             {
                 foreach (var existingPixKey in existingPixKeys.pixKeys)
                 {
-                    if (existingPixKey.UserId == _userId)
+                    if (existingPixKey.UserId == userId)
                     {
                         Notify("Chave já cadastrada.");
                         return _mapper.Map<PixKeyDto>(pixKeyCreateDto);
@@ -61,7 +65,7 @@ namespace PixWeb.Application.Services
             var pixKey = _mapper.Map<PixKey>(pixKeyCreateDto);
 
             pixKey.CreationDate = DateTime.UtcNow;
-            pixKey.UserId = _userId;
+            pixKey.UserId = userId;
 
             var createdPixKey = await _pixKeyRepository.AddAsync(pixKey);
             return _mapper.Map<PixKeyDto>(createdPixKey);
@@ -69,15 +73,15 @@ namespace PixWeb.Application.Services
 
         public async Task<PixKeyDto> UpdateAsync(PixKeyUpdateDto pixKeyUpdateDto)
         {
-            var existingKey = await _pixKeyRepository.GetByIdAsync(_userId, pixKeyUpdateDto.Id);
-            
+            var existingKey = await _pixKeyRepository.GetByIdAsync(userId, pixKeyUpdateDto.Id);
+
             if (existingKey == null)
             {
-                Notify("Chave 'não localizada.");
+                Notify("Chave não localizada.");
                 return _mapper.Map<PixKeyDto>(pixKeyUpdateDto);
             }
-            
-            var existingKeyForUser = await _pixKeyRepository.GetByIdAsync(_userId, pixKeyUpdateDto.Id);
+
+            var existingKeyForUser = await _pixKeyRepository.GetByIdAsync(userId, pixKeyUpdateDto.Id);
 
             if (existingKeyForUser != null && existingKeyForUser.Id != existingKey.Id)
             {
@@ -86,18 +90,18 @@ namespace PixWeb.Application.Services
             }
 
             _mapper.Map(pixKeyUpdateDto, existingKey);
-         
+
             var updatedPixKey = await _pixKeyRepository.UpdateAsync(existingKey);
             return _mapper.Map<PixKeyDto>(updatedPixKey);
         }
 
         public async Task<bool> DeleteAsync(int id)
         {
-            var existingPixKey = await _pixKeyRepository.GetByIdAsync(_userId, id);
+            var existingPixKey = await _pixKeyRepository.GetByIdAsync(userId, id);
 
             if (existingPixKey == null)
             {
-                Notify("Chave 'não localizada.");
+                Notify("Chave não localizada.");
                 return false;
             }
 

@@ -1,4 +1,5 @@
 ﻿using PixWeb.Application.Notifications;
+using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 
 namespace PixWeb.Application.Services
@@ -6,15 +7,17 @@ namespace PixWeb.Application.Services
     public abstract class BaseService
     {
         private readonly INotificator _notificator;
-        private readonly ClaimsPrincipal _currentUser;
-        protected String UserId { get; private set; }
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        protected string userId { get; private set; } 
 
-        protected BaseService(INotificator notificator, ClaimsPrincipal currentUser)
+        protected BaseService(INotificator notificator, IHttpContextAccessor httpContextAccessor)
         {
             _notificator = notificator;
-            _currentUser = currentUser;
+            _httpContextAccessor = httpContextAccessor;
 
-            UserId = _currentUser.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var user = _httpContextAccessor.HttpContext?.User ;
+            userId = user?.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+
         }
 
         protected void Notify(string message)
