@@ -8,11 +8,10 @@ import { ToastrModule } from 'ngx-toastr';
 import { BsModalService, ModalModule } from 'ngx-bootstrap/modal';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 
-import { NavigationModule } from './navigation/navigation.module';
+import { NavigationModule } from './features/navigation/navigation.module';
 import { LocalStorageUtils } from './utils/localstorage';
 import { NgxSpinnerModule } from "ngx-spinner";
 import { ErrorInterceptor } from "./services/error.handler.service";
-import { KeyMaskPipe } from './pipes/key-mask.pipe';
 
 export const httpInterceptorProviders = [
   { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },

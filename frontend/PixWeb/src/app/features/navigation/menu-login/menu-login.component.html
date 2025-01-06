@@ -1,0 +1,30 @@
+<ul [ngSwitch]="isUserLoggedIn()" class="navbar-nav ml-auto">
+    <ng-container *ngSwitchCase="false">
+        <li class="nav-item">
+            <a class="nav-link" [routerLink]="['/account/login']" data-toggle="collapse"
+                data-target="#navbarResponsive">
+                Login
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" [routerLink]="['/account/register']" data-toggle="collapse"
+                data-target="#navbarResponsive">
+                Cadastrar Conta
+            </a>
+        </li>
+    </ng-container>
+    <ng-container *ngSwitchCase="true">
+        <li class="nav-item">
+            <a class="nav-link text-dark" href="javascript:void(0)" data-toggle="collapse"
+                data-target="#navbarResponsive">
+                {{ user }}
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-dark" href="javascript:void(0)" (click)="logout()" data-toggle="collapse"
+                data-target="#navbarResponsive">
+                Sair <span class="fas fa-sign-out-alt"></span>
+            </a>
+        </li>
+    </ng-container>
+</ul>
