@@ -17,7 +17,7 @@ namespace PixWeb.API.Controllers
             _notificator = notificator;
             _currentUser = currentUser;
 
-            UserId = _currentUser.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            UserId = _currentUser.FindFirst(ClaimTypes.NameIdentifier)!.Value;
         }
 
         protected bool IsValid()
@@ -25,7 +25,7 @@ namespace PixWeb.API.Controllers
             return !_notificator.HasNotification();
         }
 
-        protected ActionResult CustomResponse(object result = null)
+        protected ActionResult CustomResponse(object? result = null)
         {
             if (IsValid())
             {
