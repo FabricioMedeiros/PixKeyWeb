@@ -10,15 +10,12 @@ namespace PixWeb.API.Controllers
     public abstract class MainController : ControllerBase
     {
         private readonly INotificator _notificator;
-        private readonly ClaimsPrincipal _currentUser;
-        protected String UserId { get; private set; }
-        protected MainController(INotificator notificator, ClaimsPrincipal currentUser)
+        protected MainController(INotificator notificator)
         {
             _notificator = notificator;
-            _currentUser = currentUser;
-
-            UserId = _currentUser.FindFirst(ClaimTypes.NameIdentifier)!.Value;
         }
+
+        protected string? UserId => User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
         protected bool IsValid()
         {

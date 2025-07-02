@@ -15,8 +15,7 @@ namespace PixWeb.API.Controllers
         private readonly IPixKeyService _pixKeyService;
 
         public PixKeyController(IPixKeyService pixKeyService,
-            INotificator notificator,
-            ClaimsPrincipal currentUser) : base(notificator, currentUser)
+            INotificator notificator) : base(notificator)
         {
             _pixKeyService = pixKeyService;
         }

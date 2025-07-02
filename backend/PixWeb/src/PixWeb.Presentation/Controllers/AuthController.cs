@@ -22,8 +22,7 @@ namespace PixWeb.API.Controllers
 
         public AuthController(UserManager<ApplicationUser> userManager,
             IConfiguration configuration,
-            INotificator notificator,
-            ClaimsPrincipal currentUser) : base(notificator, currentUser)
+            INotificator notificator) : base(notificator)
         {
             _userManager = userManager;
             _configuration = configuration;
