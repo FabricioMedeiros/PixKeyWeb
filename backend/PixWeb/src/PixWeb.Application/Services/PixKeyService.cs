@@ -30,13 +30,14 @@ namespace PixWeb.Application.Services
                 return new PixKeyListDto { PixKeys = Enumerable.Empty<PixKeyDto>(), TotalRecords = 0 };
             }
 
-            var (pixKeys, totalRecords) = await _pixKeyRepository.GetAllAsync(userId, field, value, page, pageSize);
+            var pixKeys = await _pixKeyRepository.GetAllAsync(userId, field, value, page, pageSize, Notify);
+
             return new PixKeyListDto
             {
                 PixKeys = _mapper.Map<IEnumerable<PixKeyDto>>(pixKeys),
-                TotalRecords = totalRecords,
+                TotalRecords = pixKeys.Count(),
                 Page = page ?? 1,
-                PageSize = pageSize ?? totalRecords
+                PageSize = pageSize ?? pixKeys.Count()
             };
         }
 
@@ -48,22 +49,15 @@ namespace PixWeb.Application.Services
 
         public async Task<PixKeyDto> CreateAsync(PixKeyCreateDto pixKeyCreateDto)
         {
-            var existingPixKeys = await _pixKeyRepository.GetAllAsync(userId, "Key", pixKeyCreateDto.Key);
+            var existingPixKeys = await _pixKeyRepository.GetAllAsync(userId, "Key", pixKeyCreateDto.Key, null, null, Notify);
 
-            if (existingPixKeys.pixKeys.Any())
+            if (existingPixKeys.Any(k => k.UserId == userId))
             {
-                foreach (var existingPixKey in existingPixKeys.pixKeys)
-                {
-                    if (existingPixKey.UserId == userId)
-                    {
-                        Notify("Chave já cadastrada.");
-                        return _mapper.Map<PixKeyDto>(pixKeyCreateDto);
-                    }
-                }
+                Notify("Chave já cadastrada.");
+                return _mapper.Map<PixKeyDto>(pixKeyCreateDto);
             }
 
             var pixKey = _mapper.Map<PixKey>(pixKeyCreateDto);
-
             pixKey.CreationDate = DateTime.UtcNow;
             pixKey.UserId = userId;
 
