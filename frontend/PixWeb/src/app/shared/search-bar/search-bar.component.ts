@@ -30,12 +30,10 @@ export class SearchBarComponent implements OnInit {
   }
 
   onSearch(): void {
-    if (this.searchTerm !== '') {
-      this.search.emit({
-        term: this.searchTerm.trim(),
-        pageSize: this.selectedPageSize,
-      });
-    }
+    this.search.emit({
+      term: this.searchTerm.trim(),
+      pageSize: this.selectedPageSize,
+    });
   }
 
   clearSearch(): void {
@@ -46,5 +44,4 @@ export class SearchBarComponent implements OnInit {
   onPageSizeChange(): void {
     this.onSearch();
   }
-
 }
