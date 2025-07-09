@@ -17,7 +17,7 @@ namespace PixWeb.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<PixKey>> GetAllAsync(
+        public async Task<(IEnumerable<PixKey> pixKeys, int totalRecords)> GetAllAsync(
             string userId,
             string? field = null,
             string? value = null,
@@ -37,12 +37,16 @@ namespace PixWeb.Infrastructure.Repositories
                 }
             }
 
+            var totalRecords = await query.CountAsync();
+
             if (page.HasValue && pageSize.HasValue)
             {
                 query = query.Skip((page.Value - 1) * pageSize.Value).Take(pageSize.Value);
             }
 
-            return await query.ToListAsync();
+            var pixKeys = await query.ToListAsync();
+
+            return (pixKeys, totalRecords);
         }
 
         public async Task<PixKey?> GetByIdAsync(string userId, int id)

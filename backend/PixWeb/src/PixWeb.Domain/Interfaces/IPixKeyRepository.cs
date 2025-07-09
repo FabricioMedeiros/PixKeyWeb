@@ -4,7 +4,7 @@ namespace PixWeb.Domain.Interfaces
 {
     public interface IPixKeyRepository
     {
-       Task<IEnumerable<PixKey>> GetAllAsync(
+        Task<(IEnumerable<PixKey> pixKeys, int totalRecords)> GetAllAsync(
             string userId,
             string? field = null,
             string? value = null,
