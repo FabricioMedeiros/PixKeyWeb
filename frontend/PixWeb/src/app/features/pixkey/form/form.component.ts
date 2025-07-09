@@ -1,4 +1,4 @@
-import { FormBuilder, FormControlName, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControlName, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChildren } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, fromEvent, merge } from 'rxjs';
@@ -14,30 +14,33 @@ import { documentValidator } from 'src/app/utils/document-validation';
 @Component({
   selector: 'app-form',
   templateUrl: './form.component.html',
-  styleUrls: ['./form.component.css']
+  styleUrls: ['./form.component.css'],
 })
 export class FormComponent implements OnInit, AfterViewInit {
-
-  @ViewChildren(FormControlName, { read: ElementRef }) formInputElements: ElementRef[] = [];
+  @ViewChildren(FormControlName, { read: ElementRef })
+  formInputElements: ElementRef[] = [];
 
   errors: any[] = [];
   pixKeyForm!: FormGroup;
   pixKey!: PixKey;
+
   customMask: string = '';
-
-  validationMessages!: ValidationMessages;
-  genericValidator!: GenericValidator;
   displayMessage: DisplayMessage = {};
-
   changesSaved: boolean = true;
   isEditMode: boolean = false;
+  userIsChangingKeyType = false;
 
-  constructor(private fb: FormBuilder,
+  private validationMessages: ValidationMessages;
+  private genericValidator: GenericValidator;
+
+  constructor(
+    private fb: FormBuilder,
     private pixKeyService: PixKeyService,
     private router: Router,
     private route: ActivatedRoute,
     private spinner: NgxSpinnerService,
-    private toastr: ToastrService) {
+    private toastr: ToastrService
+  ) {
     this.validationMessages = {
       description: {
         required: 'Informe a Descrição',
@@ -53,6 +56,10 @@ export class FormComponent implements OnInit, AfterViewInit {
     this.genericValidator = new GenericValidator(this.validationMessages);
   }
 
+  get keyControl() {
+    return this.pixKeyForm.get('key');
+  }
+
   ngOnInit(): void {
     this.pixKeyForm = this.fb.group({
       id: ['', []],
@@ -62,113 +69,93 @@ export class FormComponent implements OnInit, AfterViewInit {
       isPersonalKey: [false]
     });
 
-    this.applyValidationAndMask(this.pixKeyForm.get('keyType')?.value);
-
     const resolvedData = this.route.snapshot.data['pixKey'];
 
     if (resolvedData) {
       this.spinner.show();
       this.isEditMode = true;
       this.pixKeyForm.patchValue(resolvedData);
-
-      const currentKeyValue = this.pixKeyForm.get('key')?.value;
       this.applyValidationAndMask(resolvedData.keyType.toString());
-      this.pixKeyForm.get('key')?.setValue(currentKeyValue);
-    }    
+    } else {
+      this.applyValidationAndMask(this.pixKeyForm.get('keyType')?.value);
+    }
 
     this.pixKeyForm.get('keyType')?.valueChanges.subscribe(keyType => {
+      this.userIsChangingKeyType = true;
       this.applyValidationAndMask(keyType);
+      this.userIsChangingKeyType = false;
     });
 
     this.pixKeyForm.get('key')?.valueChanges.subscribe(key => {
       const keyTypeValueControl = this.pixKeyForm.get('keyType');
-
-      if (keyTypeValueControl && keyTypeValueControl.value === '0') {
-        this.customMask = this.getMaskForKeyType(keyTypeValueControl?.value);
+      if (keyTypeValueControl?.value === '0') {
+        this.customMask = this.getMaskForKeyType(keyTypeValueControl.value);
       }
+    });
 
-      this.pixKeyForm.get('key')?.markAsPristine();
-    });    
-    
-    this.spinner.hide();   
+    this.spinner.hide();
   }
 
   ngAfterViewInit(): void {
-    let controlBlurs: Observable<any>[] = this.formInputElements
-      .map((formControl: ElementRef) => fromEvent(formControl.nativeElement, 'blur'));
+    const controlBlurs: Observable<any>[] = this.formInputElements.map(
+      (formControl: ElementRef) =>
+        fromEvent(formControl.nativeElement, 'blur')
+    );
 
     merge(...controlBlurs).subscribe(() => {
-      this.displayMessage = this.genericValidator.processMessages(this.pixKeyForm);
-
+      this.displayMessage = this.genericValidator.processMessages(
+        this.pixKeyForm
+      );
       this.changesSaved = false;
     });
   }
 
-  loadPixKey(id: number) {
-    this.pixKeyService.getPixKeyById(id).subscribe({
-      next: (pixKey) => {
-        this.pixKey = pixKey;
-        this.pixKeyForm.patchValue({
-          description: pixKey.description,
-          keyType: pixKey.keyType.toString(),
-          key: pixKey.key,
-          isPersonalKey: pixKey.isPersonalKey,
-        });
-      },
-      error: (error) => {
-        console.error(error);
-      }
+  initializeForm(): void {
+    this.pixKeyForm = this.fb.group({
+      id: ['', []],
+      description: ['', [Validators.required]],
+      keyType: ['', [Validators.required]],
+      key: ['', [Validators.required]],
+      isPersonalKey: [false],
     });
   }
 
-  savePixKey() {
+  savePixKey(): void {
     if (this.pixKeyForm.dirty && this.pixKeyForm.valid) {
       this.pixKeyForm.value.keyType = Number(this.pixKeyForm.value.keyType);
       this.pixKey = Object.assign({}, this.pixKey, this.pixKeyForm.value);
 
-      if (this.isEditMode) {
-        this.pixKeyService.updatePixKey(this.pixKey).subscribe({
-          next: (success) => {
+      const request$ = this.isEditMode
+        ? this.pixKeyService.updatePixKey(this.pixKey)
+        : this.pixKeyService.registerPixKey(this.pixKey);
 
-            this.processSuccess(success);
-          },
-          error: (error) => {
-
-            this.processFail(error);
-          }
-        });
-      } else {
-        this.pixKeyService.registerPixKey(this.pixKey).subscribe({
-          next: (success) => {
-
-            this.processSuccess(success);
-          },
-          error: (error) => {
-
-            this.processFail(error);
-          }
-        });
-      }
+      request$.subscribe({
+        next: (response) => this.processSuccess(response),
+        error: (error) => this.processFail(error),
+      });
 
       this.changesSaved = true;
     }
   }
 
-  processSuccess(response: any) {
+  processSuccess(response: any): void {
     this.pixKeyForm.reset();
     this.errors = [];
 
-    let toast = this.toastr.success(this.isEditMode ? 'Chave Pix Alterada com Sucesso!' : 'Chave Pix Cadastrada com Sucesso!', 'Atenção!');
+    const toast = this.toastr.success(
+      this.isEditMode
+        ? 'Chave Pix Alterada com Sucesso!'
+        : 'Chave Pix Cadastrada com Sucesso!',
+      'Atenção!'
+    );
 
-    if (toast) {
-      toast.onHidden.subscribe(() => {
-        this.router.navigate(['/pixkey/list']);
-      });
-    }
+    toast?.onHidden.subscribe(() => {
+      this.router.navigate(['/pixkey/list']);
+    });
   }
 
-  processFail(fail: any) {
-    this.errors = fail.error.errors;
+  processFail(error: any): void {
+    this.errors = error?.error?.errors || [];
     this.toastr.error('Ocorreu um erro.', 'Atenção');
   }
 
@@ -176,94 +163,93 @@ export class FormComponent implements OnInit, AfterViewInit {
     this.router.navigate(['/pixkey/list']);
   }
 
-  getMaskForKeyType(keyType: string): string {
-    if (keyType === '0') {
-      const keyValueControl = this.pixKeyForm.get('key');
-
-      if (keyValueControl && keyValueControl.value && keyValueControl.value.length <= 11) {
-        return '000.000.000-009999';
-      } else {
-        return '00.000.000/0000-00';
-      }
-
-    } else {
-      switch (keyType) {
-        case '1':
-          return '';
-        case '2':
-          return '(00) 00000-0000';
-        case '3':
-          return 'AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA';
-        default:
-          return '';
-      }
-    }
-  }
-
-  getValidatorsForKeyType(keyType: string) {
-    switch (keyType) {
-      case '0':
-        return {
-          validators: [Validators.required, documentValidator],
-          messages: {
-            required: 'Informe a Chave Pix',
-            cpfInvalid: 'CPF Inválido.',
-            cnpjInvalid: 'CNPJ Inválido.',
-          }
-        };
-      case '1':
-        return {
-          validators: [Validators.required, Validators.email],
-          messages: {
-            required: 'Informe a Chave Pix',
-            email: 'Email Inválido.'
-          }
-        };
-      case '2':
-        return {
-          validators: [Validators.required, Validators.pattern(/^\(?\d{2}\)?\s?\d{4,5}-?\d{4}$/)],
-          messages: {
-            required: 'Informe a Chave Pix',
-            pattern: 'Telefone Inválido.'
-          }
-        };
-      case '3':
-        return {
-          validators: [Validators.required, Validators.pattern(/^([0-9a-f]{8}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{12})$/i)],
-          messages: {
-            required: 'Informe a Chave Pix',
-            pattern: 'Chave Pix inválida.'
-          }
-        };
-      default:
-        return {
-          validators: [Validators.required],
-          messages: {
-            required: 'Informe a Chave Pix'
-          }
-        };
-    }
-  }
-
   applyValidationAndMask(keyType: string): void {
-    const keyValueControl = this.pixKeyForm.get('key');
+    const control = this.keyControl;
     const { validators, messages } = this.getValidatorsForKeyType(keyType);
 
-    keyValueControl?.clearValidators();
+    control?.clearValidators();
+    control?.setValidators(validators);
+    control?.updateValueAndValidity();
 
-    if (validators) {
-      keyValueControl?.setValidators(validators);
-    }
-
-    keyValueControl?.updateValueAndValidity();
     this.customMask = this.getMaskForKeyType(keyType);
 
-    this.validationMessages = Object.assign({}, this.validationMessages, { key: messages });
+    this.validationMessages = {
+      ...this.validationMessages,
+      key: messages,
+    };
+
     this.genericValidator = new GenericValidator(this.validationMessages);
 
-    this.pixKeyForm.get('key')?.reset('');
-    this.pixKeyForm.get('key')?.markAsUntouched();
-    this.pixKeyForm.get('key')?.markAsPristine();
-    this.pixKeyForm.get('key')?.setErrors(null);
+    if (!this.isEditMode || this.userIsChangingKeyType) {
+      control?.reset('');
+      control?.markAsUntouched();
+      control?.markAsPristine();
+      control?.setErrors(null);
+    }
+  }
+
+  getMaskForKeyType(keyType: string): string {
+    if (keyType === '0') {
+      return this.keyControl?.value?.length <= 11
+        ? '000.000.000-009999'
+        : '00.000.000/0000-00';
+    }
+
+    const maskMap: Record<string, string> = {
+      '1': '',
+      '2': '(00) 00000-0000',
+      '3': 'AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA',
+    };
+
+    return maskMap[keyType] || '';
+  }
+
+  getValidatorsForKeyType(
+    keyType: string
+  ): { validators: ValidatorFn[]; messages: any } {
+    const validatorMap: Record<string, () => { validators: ValidatorFn[]; messages: any }> = {
+      '0': () => ({
+        validators: [Validators.required, documentValidator],
+        messages: {
+          required: 'Informe a Chave Pix',
+          cpfInvalid: 'CPF Inválido.',
+          cnpjInvalid: 'CNPJ Inválido.',
+        },
+      }),
+      '1': () => ({
+        validators: [Validators.required, Validators.email],
+        messages: {
+          required: 'Informe a Chave Pix',
+          email: 'Email Inválido.',
+        },
+      }),
+      '2': () => ({
+        validators: [
+          Validators.required,
+          Validators.pattern(/^\(?\d{2}\)?\s?9\d{4}-?\d{4}$/),
+        ],
+        messages: {
+          required: 'Informe a Chave Pix',
+          pattern: 'Telefone celular inválido. Use o formato (XX) 9XXXX-XXXX',
+        },
+      }),
+      '3': () => ({
+        validators: [
+          Validators.required,
+          Validators.pattern(
+            /^([0-9a-f]{8}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{12})$/i
+          ),
+        ],
+        messages: {
+          required: 'Informe a Chave Pix',
+          pattern: 'Chave Pix inválida.',
+        },
+      }),
+    };
+
+    return validatorMap[keyType]?.() || {
+      validators: [Validators.required],
+      messages: { required: 'Informe a Chave Pix' },
+    };
   }
 }
