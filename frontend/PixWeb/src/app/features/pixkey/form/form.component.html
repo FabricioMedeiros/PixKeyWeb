@@ -37,30 +37,32 @@
             </label>
           </div>
 
-          <div class="form-group">
-            <label class="control-label">Tipo de Chave</label>
-            <div>
-              <select class="form-control" id="keyType" formControlName="keyType"
-                [ngClass]="{'is-invalid': displayMessage['keyType']}">
-                <option value="">Selecione</option>
-                <option value="0">CPF/CNPJ</option>
-                <option value="1">Email</option>
-                <option value="2">Telefone</option>
-                <option value="3">Chave Aleatória</option>
-              </select>
-              <span class="text-danger" *ngIf="displayMessage['keyType']">
-                <p [innerHTML]="displayMessage['keyType']"></p>
+          <div class="form-row">
+            <div class="form-group col-md-4">
+              <label class="control-label">Tipo de Chave</label>
+              <div>
+                <select class="form-control" id="keyType" formControlName="keyType"
+                  [ngClass]="{'is-invalid': displayMessage['keyType']}">
+                  <option value="">Selecione</option>
+                  <option value="0">CPF/CNPJ</option>
+                  <option value="1">Email</option>
+                  <option value="2">Telefone</option>
+                  <option value="3">Chave Aleatória</option>
+                </select>
+                <span class="text-danger" *ngIf="displayMessage['keyType']">
+                  <p [innerHTML]="displayMessage['keyType']"></p>
+                </span>
+              </div>
+            </div>
+
+            <div class="form-group col-md-8">
+              <label for="key">Chave Pix</label>
+              <input class="form-control" id="key" type="text" [mask]="customMask" placeholder="Chave Pix (requerido)"
+                formControlName="key" [ngClass]="{'is-invalid': displayMessage['key'] }" />
+              <span class="text-danger" *ngIf="displayMessage['key']">
+                <p [innerHTML]="displayMessage['key']"></p>
               </span>
             </div>
-          </div>
-
-          <div class="form-group">
-            <label for="key">Chave Pix</label>
-            <input class="form-control" id="key" type="text" [mask]="customMask" placeholder="Chave Pix (requerido)"
-              formControlName="key" [ngClass]="{'is-invalid': displayMessage['key'] }" />
-            <span class="text-danger" *ngIf="displayMessage['key']">
-              <p [innerHTML]="displayMessage['key']"></p>
-            </span>
           </div>
 
         </div>
