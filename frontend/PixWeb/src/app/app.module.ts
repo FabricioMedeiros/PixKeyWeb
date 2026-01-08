@@ -12,6 +12,7 @@ import { NavigationModule } from './features/navigation/navigation.module';
 import { LocalStorageUtils } from './utils/localstorage';
 import { NgxSpinnerModule } from "ngx-spinner";
 import { ErrorInterceptor } from "./services/error.handler.service";
+import { SharedModule } from "./shared/shared.module";
 
 export const httpInterceptorProviders = [
   { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
@@ -30,6 +31,7 @@ export const httpInterceptorProviders = [
     NgxSpinnerModule,
     ToastrModule.forRoot(),
     ModalModule.forRoot(),
+    SharedModule
   ],
   providers: [LocalStorageUtils, BsModalService, httpInterceptorProviders],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],

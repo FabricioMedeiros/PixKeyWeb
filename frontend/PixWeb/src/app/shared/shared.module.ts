@@ -1,22 +1,26 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PaginationComponent } from './pagination/pagination.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { SearchBarComponent } from './search-bar/search-bar.component';
+
+import { SearchBarComponent } from './components/search-bar/search-bar.component';
+import { ButtonScrollTopComponent } from './components/button-scroll-top/button-scroll-top.component';
+import { PaginationComponent } from './components/pagination/pagination.component';
 
 @NgModule({
   declarations: [
     PaginationComponent,
-    SearchBarComponent
+    SearchBarComponent,
+    ButtonScrollTopComponent
   ],
   imports: [
     CommonModule,
     FormsModule,
-    ReactiveFormsModule,
+    ReactiveFormsModule
   ],
   exports: [
     PaginationComponent,
-    SearchBarComponent
+    SearchBarComponent,
+    ButtonScrollTopComponent
   ]
 })
 export class SharedModule { }

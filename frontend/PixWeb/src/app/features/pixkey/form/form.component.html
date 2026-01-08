@@ -67,7 +67,7 @@
 
         </div>
         <div class="card-footer text-center">
-          <button class="btn btn-success" [disabled]="!pixKeyForm.valid" type="submit"
+          <button class="btn btn-success" [disabled]="!pixKeyForm.valid || !pixKeyForm.dirty" type="submit"
             style="margin-right: 15px; width:100px;">Salvar</button>
           <button class="btn btn-secondary" (click)="cancel()"
             style="margin-right: 15px; width:100px;">Cancelar</button>

@@ -92,6 +92,7 @@ export class ListComponent implements OnInit {
   }
 
   private processLoadPixKeysSucess(response: any) {
+    this.errorMessage = '';
     this.pixKeys = response.data.pixKeys;
     this.currentPage = response.data.page;
     this.totalPages = Math.ceil(response.data.totalRecords / response.data.pageSize);

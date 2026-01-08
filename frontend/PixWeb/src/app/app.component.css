@@ -1,0 +1,10 @@
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 120px); 
+}
+
+.content-container {
+  flex: 1;
+  overflow-y: auto; 
+}
