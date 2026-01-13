@@ -4,7 +4,7 @@ namespace PixWeb.Application.Services
 {
     public interface IPixKeyService
     {
-        Task<PixKeyListDto> GetAllAsync(string? field = null, string? value = null, int? page = null, int? pageSize = null);
+        Task<PixKeyListDto> GetAllAsync(string? field = null, object? value = null, int? page = null, int? pageSize = null);
         Task<PixKeyDto> GetByIdAsync(int id);
         Task<PixKeyDto> CreateAsync(PixKeyCreateDto pixKeyCreateDto);
         Task<PixKeyDto> UpdateAsync(PixKeyUpdateDto pixKeyUpdateDto);

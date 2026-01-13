@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { PixKey } from '../models/pixkey';
 import { Router, NavigationEnd, Event } from '@angular/router';
 
@@ -25,9 +25,15 @@ export class ListComponent implements OnInit {
   totalPages: number = 1;
 
   searchTerm: string = '';
+  searchField: string = 'Description';
   loadingKeys: boolean = true;
 
-  @Input() placeholderSearch: string = 'Pesquise pela descrição';
+  fieldsSearch = [
+    { label: 'Descrição', field: 'Description' },
+    { label: 'Chave Pessoal', field: 'IsPersonalKey' },
+    { label: 'Tipo de Chave', field: 'KeyType' },
+    { label: 'Chave', field: 'Key' }
+  ];
 
   bsModalRef!: BsModalRef;
   @ViewChild('deleteModal') deleteModal!: TemplateRef<any>;
@@ -45,7 +51,6 @@ export class ListComponent implements OnInit {
       filter((e: Event): e is NavigationEnd => e instanceof NavigationEnd),
       map((e: NavigationEnd) => e)
     ).subscribe(event => {
-      console.log('url: ' + event.url);
       if (!event.url.includes('/pixkey')) {
         this.pixKeyService.clearLocalCurrentPageList();
         this.pixKeyService.clearLocalSearchTerm();
@@ -75,13 +80,15 @@ export class ListComponent implements OnInit {
     this.loadPixKeys();
   }
 
-  loadPixKeys(): void {
+  loadPixKeys(field: string = this.searchField, term: string = this.searchTerm): void {
     this.spinner.show();
     this.loadingKeys = true;
     this.pixKeys = [];
 
-    const request$ = this.searchTerm.trim() !== ''
-      ? this.pixKeyService.getAllPixKeys(this.currentPage, this.pageSize, 'Description', this.searchTerm.trim())
+    const hasTerm = term !== undefined && term !== null && term.trim() !== '';
+
+    const request$ = hasTerm
+      ? this.pixKeyService.getAllPixKeys(this.currentPage, this.pageSize, field, term) // term é string
       : this.pixKeyService.getAllPixKeys(this.currentPage, this.pageSize);
 
     request$.subscribe({
@@ -147,24 +154,26 @@ export class ListComponent implements OnInit {
   processSuccessDelete(response: any, pixKey: PixKey): void {
     this.pixKeys = this.pixKeys.filter(item => item.id !== pixKey.id);
     this.bsModalRef.hide();
-
-    const toast = this.toastr.success('Registro Excluído com Sucesso!', 'Atenção!');
-    toast?.onHidden.subscribe(() => {
-      this.pixKeys = this.pixKeys.filter(item => item.id !== pixKey.id);
-      this.bsModalRef.hide();
-    });
+    this.toastr.success('Registro Excluído com Sucesso!', 'Atenção!');
   }
 
   processFailDelete(fail: any): void {
     this.toastr.error('Ocorreu um erro.', 'Atenção');
   }
 
-  onSearch(event: { pageSize: number, term: string }): void {
+  onSearch(event: { pageSize: number; term: string; field: string }): void {
     this.pageSize = event.pageSize;
+
     this.searchTerm = event.term;
+
+    const normalizedValue = this.normalizeSearchValue(event.field, event.term);
+
+    this.searchField = event.field;
     this.currentPage = 1;
-    this.pixKeyService.saveLocalSearchTerm(this.searchTerm);
-    this.loadPixKeys();
+
+    this.pixKeyService.saveLocalSearchTerm(String(this.searchTerm));
+
+    this.loadPixKeys(this.searchField, normalizedValue);
   }
 
   clearSearch(): void {
@@ -172,6 +181,26 @@ export class ListComponent implements OnInit {
     this.searchTerm = '';
     this.currentPage = 1;
     this.pixKeyService.clearLocalSearchTerm();
-    this.loadPixKeys();
+    this.loadPixKeys(this.searchField);
+  }
+
+  normalizeSearchValue(field: string, term: string): string {
+    const raw = term?.trim().toLowerCase() ?? '';
+
+    if (field === 'KeyType') {
+      if (raw.includes('cpf') || raw.includes('cnpj')) return '0';
+      if (raw.includes('e-') || raw.includes('em')) return '1';
+      if (raw.includes('te') || raw.includes('fone')) return '2';
+      if (raw.startsWith('ale') || raw.includes('aleat') || raw.includes('rand')) return '3';
+      return '';
+    }
+
+    if (field === 'IsPersonalKey') {
+      if (['s', 'sim'].some(opt => raw.startsWith(opt))) return 'true';
+      if (['n', 'nao'].some(opt => raw.startsWith(opt))) return 'false';
+      return '';
+    }
+
+    return raw;
   }
 }

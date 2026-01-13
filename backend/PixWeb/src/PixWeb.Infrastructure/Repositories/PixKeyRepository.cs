@@ -20,17 +20,16 @@ namespace PixWeb.Infrastructure.Repositories
         public async Task<(IEnumerable<PixKey> pixKeys, int totalRecords)> GetAllAsync(
             string userId,
             string? field = null,
-            string? value = null,
+            object? value = null,
             int? page = null,
             int? pageSize = null,
             Action<string>? notify = null)
         {
             var query = _context.PixKeys.Where(k => k.UserId == userId);
 
-            if (!string.IsNullOrEmpty(field) && !string.IsNullOrEmpty(value))
+            if (!string.IsNullOrEmpty(field) && value != null)
             {
                 var filterExpression = ExpressionHelper.BuildFilterExpression<PixKey>(field, value, notify ?? (_ => { }));
-
                 if (filterExpression != null)
                 {
                     query = query.Where(filterExpression);

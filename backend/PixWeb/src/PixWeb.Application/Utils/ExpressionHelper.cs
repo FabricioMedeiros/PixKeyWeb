@@ -7,7 +7,7 @@ namespace PixWeb.Application.Utils
     {
         public static Expression<Func<TEntity, bool>>? BuildFilterExpression<TEntity>(
             string field,
-            string value,
+            object value,
             Action<string> notify)
         {
             var parameter = Expression.Parameter(typeof(TEntity), "entity");
@@ -23,64 +23,74 @@ namespace PixWeb.Application.Utils
 
             try
             {
-                Expression? comparison = BuildComparisonExpression(property, propertyType, value);
-                if (comparison == null)
+                object? typedValue;
+
+                if (propertyType.IsEnum)
                 {
-                    notify($"Valor '{value}' inválido para o campo '{field}'.");
-                    return null;
+                    if (int.TryParse(value.ToString(), out var intValue))
+                    {
+                        typedValue = Enum.ToObject(propertyType, intValue);
+                    }
+                    else
+                    {
+                        typedValue = Enum.Parse(propertyType, value.ToString()!, ignoreCase: true);
+                    }
+                }
+                else if (propertyType == typeof(DateTime))
+                {
+                    if (DateTime.TryParseExact(value.ToString(), "dd/MM/yyyy",
+                        CultureInfo.InvariantCulture, DateTimeStyles.None, out var dateValue))
+                    {
+                        typedValue = dateValue;
+                    }
+                    else
+                    {
+                        notify($"Valor '{value}' não é uma data válida (esperado dd/MM/yyyy).");
+                        return null;
+                    }
+                }
+                else
+                {
+                    typedValue = Convert.ChangeType(value, propertyType);
+                }
+
+                var constant = Expression.Constant(typedValue, propertyType);
+
+                Expression comparison;
+
+                if (propertyType == typeof(string))
+                {
+                    var method = typeof(string).GetMethod(nameof(string.Contains), new[] { typeof(string) });
+                    comparison = Expression.Call(property, method!, constant);
+                }
+                else if (propertyType == typeof(DateTime))
+                {
+                    var day = Expression.Property(property, "Day");
+                    var month = Expression.Property(property, "Month");
+                    var year = Expression.Property(property, "Year");
+
+                    var dateValue = (DateTime)typedValue;
+
+                    comparison = Expression.AndAlso(
+                        Expression.AndAlso(
+                            Expression.Equal(day, Expression.Constant(dateValue.Day)),
+                            Expression.Equal(month, Expression.Constant(dateValue.Month))
+                        ),
+                        Expression.Equal(year, Expression.Constant(dateValue.Year))
+                    );
+                }
+                else
+                {
+                    comparison = Expression.Equal(property, constant);
                 }
 
                 return Expression.Lambda<Func<TEntity, bool>>(comparison, parameter);
             }
-            catch
+            catch (Exception ex)
             {
-                notify($"Erro ao processar o campo '{field}' com valor '{value}'.");
+                notify($"Erro ao processar o campo '{field}' com valor '{value}': {ex.Message}");
                 return null;
             }
-        }
-
-        private static Expression? BuildComparisonExpression(Expression property, Type propertyType, string value)
-        {
-            switch (Type.GetTypeCode(propertyType))
-            {
-                case TypeCode.String:
-                    var method = typeof(string).GetMethod("Contains", new[] { typeof(string) });
-                    return Expression.Call(property, method!, Expression.Constant(value));
-
-                case TypeCode.Int32:
-                    if (int.TryParse(value, out var intValue))
-                        return Expression.Equal(property, Expression.Constant(intValue));
-                    break;
-
-                case TypeCode.Decimal:
-                    if (decimal.TryParse(value, out var decimalValue))
-                        return Expression.Equal(property, Expression.Constant(decimalValue));
-                    break;
-
-                case TypeCode.DateTime:
-                    if (DateTime.TryParseExact(value, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var dateValue))
-                    {
-                        var day = Expression.Property(property, "Day");
-                        var month = Expression.Property(property, "Month");
-                        var year = Expression.Property(property, "Year");
-
-                        return Expression.AndAlso(
-                            Expression.AndAlso(
-                                Expression.Equal(day, Expression.Constant(dateValue.Day)),
-                                Expression.Equal(month, Expression.Constant(dateValue.Month))
-                            ),
-                            Expression.Equal(year, Expression.Constant(dateValue.Year))
-                        );
-                    }
-                    break;
-
-                case TypeCode.Boolean:
-                    if (bool.TryParse(value, out var boolValue))
-                        return Expression.Equal(property, Expression.Constant(boolValue));
-                    break;
-            }
-
-            return null;
         }
     }
 }

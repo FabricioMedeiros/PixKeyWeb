@@ -8,29 +8,27 @@ import { Component, Output, EventEmitter, Input, OnInit } from '@angular/core';
 export class SearchBarComponent implements OnInit {
   @Input() initialSearchTerm: string = '';
   @Input() searchTerm: string = '';
-  @Input() placeholder: string = '';
   @Input() pageSizeOptions: number[] = [10, 30, 50];
+  @Input() fieldsSearch: { label: string; field: string }[] = [];
 
-  @Output() search: EventEmitter<{ term: string; pageSize: number }> = new EventEmitter();
-  @Output() clear: EventEmitter<void> = new EventEmitter<void>();
+  @Output() search = new EventEmitter<{ field: string; term: string; pageSize: number }>();
+  @Output() clear = new EventEmitter<void>();
 
   selectedPageSize: number = 10;
-
-  constructor() { }
+  selectedField: string = ''; 
 
   ngOnInit(): void {
     this.searchTerm = this.initialSearchTerm;
-  }
 
-  onInput(event: Event): void {
-    const target = event.target as HTMLInputElement | null;
-    if (target) {
-      this.searchTerm = target.value;
+    if (this.fieldsSearch.length > 0) {
+      this.selectedField = this.fieldsSearch[0].field;
     }
   }
 
   onSearch(): void {
+    if (!this.selectedField) return;
     this.search.emit({
+      field: this.selectedField,
       term: this.searchTerm.trim(),
       pageSize: this.selectedPageSize,
     });

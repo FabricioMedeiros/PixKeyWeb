@@ -7,7 +7,7 @@ namespace PixWeb.Domain.Interfaces
         Task<(IEnumerable<PixKey> pixKeys, int totalRecords)> GetAllAsync(
             string userId,
             string? field = null,
-            string? value = null,
+            object? value = null,
             int? page = null,
             int? pageSize = null,
             Action<string>? notify = null);

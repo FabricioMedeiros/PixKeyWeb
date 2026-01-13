@@ -23,7 +23,11 @@ namespace PixWeb.Application.Services
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
-        public async Task<PixKeyListDto> GetAllAsync(string? field = null, string? value = null, int? page = null, int? pageSize = null)
+        public async Task<PixKeyListDto> GetAllAsync(
+            string? field = null,
+            object? value = null,
+            int? page = null,
+            int? pageSize = null)
         {
             if (string.IsNullOrEmpty(userId))
             {

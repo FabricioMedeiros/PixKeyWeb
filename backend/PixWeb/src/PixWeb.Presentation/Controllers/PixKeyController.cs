@@ -20,7 +20,11 @@ namespace PixWeb.API.Controllers
             _pixKeyService = pixKeyService;
         }
         [HttpGet]
-        public async Task<ActionResult<PixKeyListDto>> GetPixKeys([FromQuery] string? field = null, [FromQuery] string? value = null, [FromQuery] int? page = null, [FromQuery] int? pageSize = null)
+        public async Task<ActionResult<PixKeyListDto>> GetPixKeys(
+            [FromQuery] string? field = null,
+            [FromQuery] string? value = null,
+            [FromQuery] int? page = null,
+            [FromQuery] int? pageSize = null)
         {
             var pixKeys = await _pixKeyService.GetAllAsync(field, value, page, pageSize);
             return CustomResponse(pixKeys);

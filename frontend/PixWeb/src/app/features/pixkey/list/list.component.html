@@ -5,6 +5,7 @@
 <div class="list-container-content">
   <div class="top-container">
     <h1>Chaves Pix</h1>
+
     <div *ngIf="errorMessage.length > 0" class="alert alert-danger">
       <h3>Atenção!</h3>
       <ul>
@@ -12,8 +13,13 @@
       </ul>
     </div>
 
-    <app-search-bar [pageSizeOptions]="[10, 30, 50]" [initialSearchTerm]="searchTerm" [searchTerm]="searchTerm"
-      [placeholder]="placeholderSearch" (search)="onSearch($event)" (clear)="clearSearch()">
+    <app-search-bar
+      [pageSizeOptions]="[10, 30, 50]"
+      [initialSearchTerm]="searchTerm"
+      [searchTerm]="searchTerm"
+      [fieldsSearch]="fieldsSearch"
+      (search)="onSearch($event)"
+      (clear)="clearSearch()">
     </app-search-bar>
 
     <div *ngIf="pixKeys.length === 0 && searchTerm !== '' && !errorMessage && !loadingKeys" class="no-results-message">
@@ -24,6 +30,8 @@
       <i class="fas fa-plus"></i> Cadastrar
     </a>
   </div>
+
+  <div class="table-responsive">
 
   <table class="table table-bordered table-striped">
     <thead class="thead-dark">
@@ -52,23 +60,27 @@
       </tr>
     </tbody>
   </table>
+  </div>
 
   <div *ngIf="pixKeys.length > 0">
-    <app-pagination [currentPage]="currentPage" [totalPages]="totalPages" (pageChanged)="onPageChanged($event)">
+    <app-pagination
+      [currentPage]="currentPage"
+      [totalPages]="totalPages"
+      (pageChanged)="onPageChanged($event)">
     </app-pagination>
   </div>
 
-<!-- Modal -->
-<ng-template #template>
-  <div class="modal-header">
-    <h4 class="modal-title pull-left text-danger">Atenção</h4>
-    <button type="button" class="close pull-right" aria-label="Close" (click)="bsModalRef.hide()">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
-  <div class="modal-body text-center">
-    <p>Confirma a exclusão da Chave Pix: {{selectedPixKey.description}}?</p>
-    <button type="button" class="modal-btn btn btn-danger" (click)="confirmDelete(selectedPixKey)">Excluir</button>
-    <button type="button" class="modal-btn btn btn-secondary" (click)="bsModalRef.hide()">Cancelar</button>
-  </div>
-</ng-template>
+  <ng-template #template>
+    <div class="modal-header">
+      <h4 class="modal-title pull-left text-danger">Atenção</h4>
+      <button type="button" class="close pull-right" aria-label="Close" (click)="bsModalRef.hide()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body text-center">
+      <p>Confirma a exclusão da Chave Pix: {{selectedPixKey.description}}?</p>
+      <button type="button" class="modal-btn btn btn-danger" (click)="confirmDelete(selectedPixKey)">Excluir</button>
+      <button type="button" class="modal-btn btn btn-secondary" (click)="bsModalRef.hide()">Cancelar</button>
+    </div>
+  </ng-template>
+</div>

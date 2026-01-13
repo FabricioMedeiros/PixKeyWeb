@@ -10,7 +10,7 @@ export class PixKeyService extends BaseService {
 
     constructor(private http: HttpClient) { super(); }
 
-    getAllPixKeys(page: number, pageSize: number, field?: string, value?: string): Observable<any> {
+    getAllPixKeys(page: number, pageSize: number, field?: string, value?: any): Observable<any> {
         const headers = this.GetAuthHeaderJson();
         let url = `${this.UrlServiceV1}pixkey?page=${page}&pageSize=${pageSize}`;
     
